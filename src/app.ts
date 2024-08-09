@@ -4,8 +4,8 @@ import studentRoutes from './Routes/StudentRoutes'
 import connectDB from './Config/Db'
 import { setupSwagger } from './swagger'
 import cors from 'cors'
-import { errorHandler } from './Middlewares/ErrorHandler'
-
+import errorHandler from './Middlewares/ErrorHandler'
+import setHeaders from './Middlewares/Header'
 const app = express()
 
 // Middleware
@@ -13,6 +13,7 @@ connectDB()
 
 // Enable CORS
 app.use(cors())
+app.use(setHeaders)
 
 // Middleware to parse JSON requests
 app.use(express.json())
