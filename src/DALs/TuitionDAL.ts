@@ -1,28 +1,39 @@
-import Tuition, { ITuition } from '../Models/Tuition';
+import Tuition, { ITuition } from '../Models/Tuition'
 
 export class TuitionDAL {
+  // Fetch all tuition records
   public async findAll(): Promise<ITuition[]> {
-    return Tuition.find();
+    return Tuition.find().exec()
   }
 
+  // Fetch a tuition record by its ID
   public async findById(tuitionId: string): Promise<ITuition | null> {
-    return Tuition.findById(tuitionId);
+    return Tuition.findById(tuitionId).exec()
   }
 
+  // Fetch all tuition records for a specific class ID
   public async findByClassId(classId: string): Promise<ITuition[]> {
-    return Tuition.find({ classId });
+    return Tuition.find({ classId }).exec()
   }
 
-  public async create(tuitionData: any): Promise<ITuition> {
-    const tuition = new Tuition(tuitionData);
-    return tuition.save();
+  // Create a new tuition record
+  public async create(tuitionData: ITuition): Promise<ITuition> {
+    const tuition = new Tuition(tuitionData)
+    return tuition.save()
   }
 
-  public async update(tuitionId: string, updateData: any): Promise<ITuition | null> {
-    return Tuition.findByIdAndUpdate(tuitionId, updateData, { new: true });
+  // Update an existing tuition record by its ID
+  public async update(
+    tuitionId: string,
+    updateData: Partial<ITuition>
+  ): Promise<ITuition | null> {
+    return Tuition.findByIdAndUpdate(tuitionId, updateData, {
+      new: true,
+    }).exec()
   }
 
+  // Delete a tuition record by its ID
   public async delete(tuitionId: string): Promise<ITuition | null> {
-    return Tuition.findByIdAndDelete(tuitionId);
+    return Tuition.findByIdAndDelete(tuitionId).exec()
   }
 }

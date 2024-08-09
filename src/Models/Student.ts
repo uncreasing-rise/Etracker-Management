@@ -34,7 +34,9 @@ StudentSchema.pre('save', async function (next) {
       const hashedPassword = await bcrypt.hash(this.password as string, salt)
       this.password = hashedPassword
       next()
-    } catch (error) {}
+    } catch {
+      // Handle the error if needed
+    }
   } else {
     next()
   }

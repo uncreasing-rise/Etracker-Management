@@ -7,7 +7,7 @@ import { IAdmin } from '../Models/Admin'
 import { ITeacher } from '../Models/Teacher'
 import { IStudent } from '../Models/Student'
 
-const JWT_SECRET = 'your_jwt_secret' // Thay đổi thành khóa bí mật của bạn
+const JWT_SECRET = 'your_jwt_secret'
 
 // Hàm đăng nhập cho Admin, Teacher và Student
 export const loginUser = async (
