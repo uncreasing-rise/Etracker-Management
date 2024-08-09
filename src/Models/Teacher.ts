@@ -1,12 +1,11 @@
 import mongoose, { Schema, Document } from 'mongoose'
-import User from './User'
 
 interface ITeacher extends Document {
   userId: string
   name: string
   email: string
   password: string
-  phoneNumber: string
+  phoneNumber?: string
   userType: 'teacher'
   dateOfBirth?: Date
   subjects: string[]
@@ -25,7 +24,7 @@ const TeacherSchema: Schema = new Schema({
   yearsOfExperience: { type: Number, required: true },
 })
 
-const Teacher = User.discriminator<ITeacher>('Teacher', TeacherSchema)
+const Teacher = mongoose.model<ITeacher>('Teacher', TeacherSchema)
 
 export default Teacher
 export { ITeacher }

@@ -1,12 +1,12 @@
 import mongoose, { Schema, Document } from 'mongoose'
-import User from './User'
+import bcrypt from 'bcrypt'
 
 interface IStudent extends Document {
   userId: string
   name: string
   email: string
   password: string
-  phoneNumber: string
+  phoneNumber?: string
   userType: 'student'
   dateOfBirth?: Date
   gradeLevel: number
@@ -25,7 +25,22 @@ const StudentSchema: Schema = new Schema({
   enrolledCourses: { type: [String], required: true },
 })
 
-const Student = User.discriminator<IStudent>('Student', StudentSchema)
+// Mã hóa mật khẩu trước khi lưu
+StudentSchema.pre('save', async function (next) {
+  if (this.isModified('password')) {
+    try {
+      const salt = await bcrypt.genSalt(10)
+      // Kiểm tra và ép kiểu `this.password` nếu cần
+      const hashedPassword = await bcrypt.hash(this.password as string, salt)
+      this.password = hashedPassword
+      next()
+    } catch (error) {}
+  } else {
+    next()
+  }
+})
+
+const Student = mongoose.model<IStudent>('Student', StudentSchema)
 
 export default Student
 export { IStudent }

@@ -1,12 +1,11 @@
 import mongoose, { Schema, Document } from 'mongoose'
-import User from './User'
 
 interface IAdmin extends Document {
   userId: string
   name: string
   email: string
   password: string
-  phoneNumber: string
+  phoneNumber?: string
   userType: 'admin'
   dateOfBirth?: Date
   permissions: string[]
@@ -23,7 +22,7 @@ const AdminSchema: Schema = new Schema({
   permissions: { type: [String], required: true },
 })
 
-const Admin = User.discriminator<IAdmin>('Admin', AdminSchema)
+const Admin = mongoose.model<IAdmin>('Admin', AdminSchema)
 
 export default Admin
 export { IAdmin }
