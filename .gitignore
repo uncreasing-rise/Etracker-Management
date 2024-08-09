@@ -1,0 +1,28 @@
+# Thư mục node_modules chứa các gói npm và không nên đưa vào version control
+node_modules/
+
+# Thư mục build hoặc dist chứa mã đã biên dịch, không nên đưa vào version control
+build/
+dist/
+
+# Tập tin cấu hình Prettier
+.prettierrc
+
+# Tập tin cấu hình ESLint
+.eslintrc.json
+
+# Tập tin cấu hình TypeScript
+tsconfig.json
+
+# Tập tin môi trường chứa thông tin nhạy cảm và cấu hình riêng
+.env
+
+# Tập tin log
+*.log
+
+# Các tập tin hệ thống và IDE
+.DS_Store
+*.swp
+*.swo
+.idea/
+.vscode/
