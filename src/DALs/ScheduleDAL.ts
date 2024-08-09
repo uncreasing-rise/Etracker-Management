@@ -9,14 +9,14 @@ export class ScheduleDAL {
     return Schedule.findById(scheduleId)
   }
 
-  public async create(scheduleData: any): Promise<ISchedule> {
+  public async create(scheduleData: Partial<ISchedule>): Promise<ISchedule> {
     const schedule = new Schedule(scheduleData)
     return schedule.save()
   }
 
   public async update(
     scheduleId: string,
-    updateData: any
+    updateData: Partial<ISchedule>
   ): Promise<ISchedule | null> {
     return Schedule.findByIdAndUpdate(scheduleId, updateData, { new: true })
   }

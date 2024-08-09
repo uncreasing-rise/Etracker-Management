@@ -12,7 +12,7 @@ export const getAllTeachersController = async (req: Request, res: Response) => {
   try {
     const teachers = await getAllTeachersService()
     res.json(teachers)
-  } catch (error) {
+  } catch {
     res.status(500).json({ message: 'An error occurred' })
   }
 }
@@ -27,7 +27,7 @@ export const getTeacherByIdController = async (req: Request, res: Response) => {
     } else {
       res.status(404).json({ message: 'Teacher not found' })
     }
-  } catch (error) {
+  } catch {
     res.status(500).json({ message: 'An error occurred' })
   }
 }
@@ -37,7 +37,7 @@ export const createTeacherController = async (req: Request, res: Response) => {
   try {
     const teacher = await createTeacherService(req.body)
     res.status(201).json(teacher)
-  } catch (error) {
+  } catch {
     res.status(400).json({ message: 'An error occurred' })
   }
 }
@@ -52,7 +52,7 @@ export const updateTeacherController = async (req: Request, res: Response) => {
     } else {
       res.status(404).json({ message: 'Teacher not found' })
     }
-  } catch (error) {
+  } catch {
     res.status(400).json({ message: 'An error occurred' })
   }
 }
@@ -67,7 +67,7 @@ export const deleteTeacherController = async (req: Request, res: Response) => {
     } else {
       res.status(404).json({ message: 'Teacher not found' })
     }
-  } catch (error) {
+  } catch {
     res.status(500).json({ message: 'An error occurred' })
   }
 }

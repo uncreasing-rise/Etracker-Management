@@ -12,7 +12,7 @@ export const getAllAdminsController = async (req: Request, res: Response) => {
   try {
     const admins = await getAllAdminsService()
     res.json(admins)
-  } catch (error) {
+  } catch {
     res.status(500).json({ message: 'An error occurred' })
   }
 }
@@ -27,7 +27,7 @@ export const getAdminByIdController = async (req: Request, res: Response) => {
     } else {
       res.status(404).json({ message: 'Admin not found' })
     }
-  } catch (error) {
+  } catch {
     res.status(500).json({ message: 'An error occurred' })
   }
 }
@@ -37,7 +37,7 @@ export const createAdminController = async (req: Request, res: Response) => {
   try {
     const admin = await createAdminService(req.body)
     res.status(201).json(admin)
-  } catch (error) {
+  } catch {
     res.status(400).json({ message: 'An error occurred' })
   }
 }
@@ -52,7 +52,7 @@ export const updateAdminController = async (req: Request, res: Response) => {
     } else {
       res.status(404).json({ message: 'Admin not found' })
     }
-  } catch (error) {
+  } catch {
     res.status(400).json({ message: 'An error occurred' })
   }
 }
@@ -67,7 +67,7 @@ export const deleteAdminController = async (req: Request, res: Response) => {
     } else {
       res.status(404).json({ message: 'Admin not found' })
     }
-  } catch (error) {
+  } catch {
     res.status(500).json({ message: 'An error occurred' })
   }
 }

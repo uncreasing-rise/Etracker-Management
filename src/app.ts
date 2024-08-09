@@ -2,7 +2,7 @@ import express from 'express'
 import authRoutes from './Routes/AuthRoutes'
 import studentRoutes from './Routes/StudentRoutes'
 import connectDB from './Config/Db'
-import { setupSwagger } from './swagger';
+import { setupSwagger } from './swagger'
 
 const app = express()
 
@@ -11,7 +11,7 @@ connectDB()
 
 // Middleware to parse JSON requests
 app.use(express.json())
-setupSwagger(app);
+setupSwagger(app)
 
 // Routes
 app.use('/api/auth', authRoutes) // Route for authentication

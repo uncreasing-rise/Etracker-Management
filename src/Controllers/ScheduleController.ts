@@ -9,7 +9,7 @@ export const getAllSchedulesController = async (
   try {
     const schedules = await Schedule.find()
     res.json(schedules)
-  } catch (error) {
+  } catch {
     res.status(500).json({ message: 'An error occurred' })
   }
 }
@@ -27,7 +27,7 @@ export const getScheduleByIdController = async (
     } else {
       res.status(404).json({ message: 'Schedule not found' })
     }
-  } catch (error) {
+  } catch {
     res.status(500).json({ message: 'An error occurred' })
   }
 }
@@ -38,7 +38,7 @@ export const createScheduleController = async (req: Request, res: Response) => {
     const schedule = new Schedule(req.body)
     await schedule.save()
     res.status(201).json(schedule)
-  } catch (error) {
+  } catch {
     res.status(400).json({ message: 'An error occurred' })
   }
 }
@@ -55,7 +55,7 @@ export const updateScheduleController = async (req: Request, res: Response) => {
     } else {
       res.status(404).json({ message: 'Schedule not found' })
     }
-  } catch (error) {
+  } catch {
     res.status(400).json({ message: 'An error occurred' })
   }
 }
@@ -70,7 +70,7 @@ export const deleteScheduleController = async (req: Request, res: Response) => {
     } else {
       res.status(404).json({ message: 'Schedule not found' })
     }
-  } catch (error) {
+  } catch {
     res.status(500).json({ message: 'An error occurred' })
   }
 }
