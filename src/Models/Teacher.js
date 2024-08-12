@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
 const { Schema } = mongoose;
 
 // Define the schema for materials created by the teacher
@@ -6,19 +7,19 @@ const MaterialSchema = new Schema({
   materialId: {
     type: Schema.Types.ObjectId,
     ref: 'Material',
-    required: true,
+    required: false,
   },
   title: {
     type: String,
-    required: true,
+    required: false,
   },
   description: {
     type: String,
-    required: true,
+    required: false,
   },
   uploadDate: {
     type: Date,
-    required: true,
+    required: false,
   },
 });
 
@@ -27,19 +28,19 @@ const AssignmentSchema = new Schema({
   assignmentId: {
     type: Schema.Types.ObjectId,
     ref: 'Assignment',
-    required: true,
+    required: false,
   },
   title: {
     type: String,
-    required: true,
+    required: false,
   },
   description: {
     type: String,
-    required: true,
+    required: false,
   },
   dueDate: {
     type: Date,
-    required: true,
+    required: false,
   },
 });
 
@@ -48,19 +49,19 @@ const QuizSchema = new Schema({
   quizId: {
     type: Schema.Types.ObjectId,
     ref: 'Quiz',
-    required: true,
+    required: false,
   },
   title: {
     type: String,
-    required: true,
+    required: false,
   },
   description: {
     type: String,
-    required: true,
+    required: false,
   },
   timeLimit: {
     type: Number,
-    required: true,
+    required: false,
   },
 });
 
@@ -69,11 +70,16 @@ const TeacherSchema = new Schema({
   username: {
     type: String,
     required: true,
-    unique: true,
+    unique: true, // Ensure uniqueness
   },
   password: {
     type: String,
     required: true,
+  },
+  role: {
+    type: String,
+    required: true,
+    default: 'Teacher', // Set a default value
   },
   profile: {
     fullName: {
@@ -83,6 +89,7 @@ const TeacherSchema = new Schema({
     email: {
       type: String,
       required: true,
+      unique: true, // Ensure uniqueness
     },
     phone: {
       type: String,
@@ -94,18 +101,35 @@ const TeacherSchema = new Schema({
     },
     bio: {
       type: String,
+      required: false,
     },
   },
   createdClasses: [
     {
       type: Schema.Types.ObjectId,
       ref: 'Class',
-      required: true,
+      required: false,
     },
   ],
   materials: [MaterialSchema],
   assignments: [AssignmentSchema],
   quizzes: [QuizSchema],
+});
+
+// Middleware to hash password before saving
+TeacherSchema.pre('save', async function (next) {
+  if (this.isModified('password') || this.isNew) {
+    try {
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(this.password, salt);
+      this.password = hashedPassword;
+      next();
+    } catch (error) {
+      next(error);
+    }
+  } else {
+    return next();
+  }
 });
 
 // Create and export the teacher model

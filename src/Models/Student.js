@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
+const bcrypt = require('bcrypt');
 
 // Define the schema for assignment details
 const AssignmentSchema = new Schema({
@@ -52,30 +53,53 @@ const NotificationSchema = new Schema({
   },
   date: { type: Date },
   message: { type: String },
-  read: { type: Boolean },
+  read: { type: Boolean, default: false },
 });
 
 // Define the schema for the student document
-const StudentSchema = new Schema({
-  username: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
-  profile: {
-    fullName: { type: String, required: true },
-    email: { type: String, required: true },
-    phone: { type: String, required: true },
-    address: { type: String, required: true },
-  },
-  enrolledClasses: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: 'Class',
+const StudentSchema = new Schema(
+  {
+    username: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
+    role: { type: String, required: true, default: 'Student' },
+    profile: {
+      fullName: { type: String, required: true },
+      email: { type: String, required: true },
+      phone: { type: String, required: true },
+      address: { type: String, required: true },
     },
-  ],
-  assignments: [AssignmentSchema],
-  quizzes: [QuizSchema],
-  materialsAccessed: [MaterialAccessedSchema],
-  notifications: [NotificationSchema],
+    enrolledClasses: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'Class',
+      },
+    ],
+    assignments: [AssignmentSchema],
+    quizzes: [QuizSchema],
+    materialsAccessed: [MaterialAccessedSchema],
+    notifications: [NotificationSchema],
+  },
+  { timestamps: true } // Automatically adds createdAt and updatedAt fields
+);
+
+// Password hashing middleware
+StudentSchema.pre('save', async function (next) {
+  if (!this.isModified('password')) {
+    return next();
+  }
+  try {
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+    next();
+  } catch (err) {
+    next(err);
+  }
 });
+
+// Method to compare password for login
+StudentSchema.methods.comparePassword = async function (candidatePassword) {
+  return await bcrypt.compare(candidatePassword, this.password);
+};
 
 // Create and export the student model
 const StudentModel = mongoose.model('Student', StudentSchema);

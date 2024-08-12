@@ -18,8 +18,12 @@ const AssignmentSchema = new Schema({
   teacherId: { type: Schema.Types.ObjectId, ref: 'Teacher', required: true },
   dueDate: { type: Date, required: true },
   submissions: [SubmissionSchema],
-  status: { type: String, required: true },
-  createdDate: { type: Date, required: true },
+  status: {
+    type: String,
+    enum: ['Pending', 'Submitted', 'Graded'],
+    required: true,
+  },
+  createdDate: { type: Date, default: Date.now }, // Default to current date if not provided
 });
 
 // Create and export the assignment model

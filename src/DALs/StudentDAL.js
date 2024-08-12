@@ -57,71 +57,33 @@ const deleteStudentById = async (id) => {
   }
 };
 
-// Function to add an assignment to a student
-const addAssignmentToStudent = async (studentId, assignment) => {
+// Function to submit a quiz attempt
+const submitQuizAttempt = async (studentId, quizSubmissionData) => {
   try {
-    const student = await StudentModel.findById(studentId).exec();
+    const student = await StudentModel.findByIdAndUpdate(
+      studentId,
+      { $push: { quizzes: quizSubmissionData } }, // Add the quiz submission data to the quizzes array
+      { new: true }
+    ).exec();
     if (!student) {
-      console.error('Student not found');
-      return null;
+      throw new Error('Student not found');
     }
-    student.assignments.push(assignment);
-    await student.save();
     return student;
   } catch (error) {
-    console.error('Error adding assignment to student:', error);
-    throw new Error('Error adding assignment');
+    throw new Error(`Error submitting quiz attempt: ${error.message}`);
   }
 };
-
-// Function to add a quiz to a student
-const addQuizToStudent = async (studentId, quiz) => {
-  try {
-    const student = await StudentModel.findById(studentId).exec();
-    if (!student) {
-      console.error('Student not found');
-      return null;
-    }
-    student.quizzes.push(quiz);
-    await student.save();
-    return student;
-  } catch (error) {
-    console.error('Error adding quiz to student:', error);
-    throw new Error('Error adding quiz');
+// Function to find multiple students by IDs
+const findStudentsByIds = async (ids) => {
+  if (!Array.isArray(ids) || ids.length === 0) {
+    throw new Error('A non-empty array of IDs is required');
   }
-};
 
-// Function to add accessed material to a student
-const addMaterialAccessedToStudent = async (studentId, materialAccessed) => {
   try {
-    const student = await StudentModel.findById(studentId).exec();
-    if (!student) {
-      console.error('Student not found');
-      return null;
-    }
-    student.materialsAccessed.push(materialAccessed);
-    await student.save();
-    return student;
+    return await StudentModel.find({ _id: { $in: ids } }).exec();
   } catch (error) {
-    console.error('Error adding material access to student:', error);
-    throw new Error('Error adding material access');
-  }
-};
-
-// Function to add a notification to a student
-const addNotificationToStudent = async (studentId, notification) => {
-  try {
-    const student = await StudentModel.findById(studentId).exec();
-    if (!student) {
-      console.error('Student not found');
-      return null;
-    }
-    student.notifications.push(notification);
-    await student.save();
-    return student;
-  } catch (error) {
-    console.error('Error adding notification to student:', error);
-    throw new Error('Error adding notification');
+    console.error('Error finding students by IDs:', error);
+    throw new Error('Error finding students by IDs');
   }
 };
 
@@ -131,8 +93,6 @@ module.exports = {
   createStudent,
   updateStudentById,
   deleteStudentById,
-  addAssignmentToStudent,
-  addQuizToStudent,
-  addMaterialAccessedToStudent,
-  addNotificationToStudent,
+  submitQuizAttempt,
+  findStudentsByIds,
 };

@@ -104,8 +104,7 @@ router.get(
  */
 router.post(
   '/',
-  authenticateToken,
-  authorization(['admin']),
+
   createAdminController
 );
 

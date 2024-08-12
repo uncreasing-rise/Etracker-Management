@@ -1,5 +1,3 @@
-// src/Routes/QuizRoutes.js
-
 const express = require('express');
 const router = express.Router();
 const {
@@ -19,10 +17,17 @@ const {
 
 /**
  * @swagger
- * /api/quizzes:
+ * /api/classes/{classId}/quizzes:
  *   get:
- *     summary: Get all quizzes
+ *     summary: Get all quizzes for a specific class
  *     tags: [Quiz]
+ *     parameters:
+ *       - in: path
+ *         name: classId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Class ID
  *     responses:
  *       200:
  *         description: List of quizzes
@@ -35,15 +40,21 @@ const {
  *       500:
  *         description: Error retrieving quizzes
  */
-router.get('/', getAllQuizzesController);
+router.get('/classes/:classId/quizzes', getAllQuizzesController);
 
 /**
  * @swagger
- * /api/quizzes/{quizId}:
+ * /api/classes/{classId}/quizzes/{quizId}:
  *   get:
- *     summary: Get quiz by ID
+ *     summary: Get quiz by ID for a specific class
  *     tags: [Quiz]
  *     parameters:
+ *       - in: path
+ *         name: classId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Class ID
  *       - in: path
  *         name: quizId
  *         schema:
@@ -58,18 +69,25 @@ router.get('/', getAllQuizzesController);
  *             schema:
  *               $ref: '#/components/schemas/Quiz'
  *       404:
- *         description: Quiz not found
+ *         description: Quiz not found or Quiz not part of the specified class
  *       500:
  *         description: Error retrieving quiz
  */
-router.get('/:quizId', getQuizByIdController);
+router.get('/classes/:classId/quizzes/:quizId', getQuizByIdController);
 
 /**
  * @swagger
- * /api/quizzes:
+ * /api/classes/{classId}/quizzes:
  *   post:
- *     summary: Create a new quiz
+ *     summary: Create a new quiz for a specific class
  *     tags: [Quiz]
+ *     parameters:
+ *       - in: path
+ *         name: classId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Class ID
  *     requestBody:
  *       required: true
  *       content:
@@ -86,15 +104,21 @@ router.get('/:quizId', getQuizByIdController);
  *       400:
  *         description: Error creating quiz
  */
-router.post('/', createQuizController);
+router.post('/classes/:classId/quizzes', createQuizController);
 
 /**
  * @swagger
- * /api/quizzes/{quizId}:
+ * /api/classes/{classId}/quizzes/{quizId}:
  *   put:
- *     summary: Update quiz by ID
+ *     summary: Update quiz by ID for a specific class
  *     tags: [Quiz]
  *     parameters:
+ *       - in: path
+ *         name: classId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Class ID
  *       - in: path
  *         name: quizId
  *         schema:
@@ -115,19 +139,25 @@ router.post('/', createQuizController);
  *             schema:
  *               $ref: '#/components/schemas/Quiz'
  *       404:
- *         description: Quiz not found
+ *         description: Quiz not found or Quiz not part of the specified class
  *       400:
  *         description: Error updating quiz
  */
-router.put('/:quizId', updateQuizController);
+router.put('/classes/:classId/quizzes/:quizId', updateQuizController);
 
 /**
  * @swagger
- * /api/quizzes/{quizId}:
+ * /api/classes/{classId}/quizzes/{quizId}:
  *   delete:
- *     summary: Delete quiz by ID
+ *     summary: Delete quiz by ID for a specific class
  *     tags: [Quiz]
  *     parameters:
+ *       - in: path
+ *         name: classId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Class ID
  *       - in: path
  *         name: quizId
  *         schema:
@@ -138,10 +168,10 @@ router.put('/:quizId', updateQuizController);
  *       200:
  *         description: Quiz deleted successfully
  *       404:
- *         description: Quiz not found
+ *         description: Quiz not found or Quiz not part of the specified class
  *       500:
  *         description: Error deleting quiz
  */
-router.delete('/:quizId', deleteQuizController);
+router.delete('/classes/:classId/quizzes/:quizId', deleteQuizController);
 
 module.exports = router;

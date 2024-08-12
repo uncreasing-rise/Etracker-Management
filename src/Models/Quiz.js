@@ -48,13 +48,11 @@ const QuizSchema = new Schema({
   questions: [QuestionSchema],
   timeLimit: { type: Number, required: true },
   attempts: [AttemptSchema],
-  createdDate: {
-    type: Date,
-    required: true,
-  },
+  createdDate: { type: Date, default: Date.now },
   status: {
     type: String,
     required: true,
+    enum: ['active', 'inactive'], // Enum to specify the status
   },
 });
 

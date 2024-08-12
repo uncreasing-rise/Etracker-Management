@@ -2,18 +2,20 @@ const { login } = require('../Services/LoginService');
 
 const loginController = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { username, password } = req.body;
     console.log('Request Body:', req.body);
 
-    if (!email || !password) {
-      return res.status(400).json({ error: 'Email and password are required' });
+    if (!username || !password) {
+      return res
+        .status(400)
+        .json({ error: 'username and password are required' });
     }
 
     // Assuming login function is imported from another module
-    const { user, token } = await login(email, password);
+    const { user, token } = await login(username, password);
 
     if (!user || !token) {
-      return res.status(401).json({ error: 'Invalid email or password' });
+      return res.status(401).json({ error: 'Invalid username or password' });
     }
 
     res.status(200).json({ user, token }); // Assuming `user` includes the role

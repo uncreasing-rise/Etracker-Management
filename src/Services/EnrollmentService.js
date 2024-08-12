@@ -1,4 +1,4 @@
-const enrollmentDAL = require('../DAL/EnrollmentDAL');
+const enrollmentDAL = require('../DALs/EnrollmentDAL');
 
 const getAllEnrollmentsService = async () => {
   return enrollmentDAL.getAllEnrollments();

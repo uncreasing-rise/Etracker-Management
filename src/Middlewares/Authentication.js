@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const SECRET_KEY = process.env.SECRET_KEY;
+const SECRET_KEY = process.env.JWT_SECRET;
 
 const authenticateToken = (req, res, next) => {
   // Get the token from the Authorization header
@@ -10,13 +10,14 @@ const authenticateToken = (req, res, next) => {
       : null;
 
   if (token === null) {
-    return res.status(401).json({ error: 'Unauthorized: No token provided' }); // Unauthorized
+    return res.status(401).json({ error: 'Unauthorized: No token provided' });
   }
 
   // Verify the token
   jwt.verify(token, SECRET_KEY, (err, user) => {
     if (err) {
-      return res.status(403).json({ error: 'Forbidden: Invalid token' }); // Forbidden
+      console.error('Token verification error:', err); // Debugging
+      return res.status(403).json({ error: 'Forbidden: Invalid token' });
     }
     req.user = user; // Attach the user info to the request object
     next(); // Proceed to the next middleware or route handler

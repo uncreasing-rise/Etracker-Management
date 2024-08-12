@@ -8,6 +8,7 @@ const {
   createClassController,
   updateClassController,
   deleteClassController,
+  addStudentsToClass,
 } = require('../Controllers/ClassController');
 
 /**
@@ -143,5 +144,7 @@ router.put('/:classId', updateClassController);
  *         description: Error deleting class
  */
 router.delete('/:classId', deleteClassController);
+
+router.post('/add-students', addStudentsToClass);
 
 module.exports = router;
