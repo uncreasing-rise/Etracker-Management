@@ -73,17 +73,32 @@ const submitQuizAttempt = async (studentId, quizSubmissionData) => {
     throw new Error(`Error submitting quiz attempt: ${error.message}`);
   }
 };
-// Function to find multiple students by IDs
-const findStudentsByIds = async (ids) => {
-  if (!Array.isArray(ids) || ids.length === 0) {
-    throw new Error('A non-empty array of IDs is required');
+
+/**
+ * Updates a student document with the given update data.
+ * @param {mongoose.Types.ObjectId | string} studentId - The ID of the student to update.
+ * @param {Object} updateData - The data to update the student with.
+ * @returns {Promise<mongoose.Document>} - The updated student document.
+ */
+const updateStudent = async (studentId, updateData) => {
+  if (!mongoose.Types.ObjectId.isValid(studentId)) {
+    throw new Error('Invalid student ID');
   }
 
   try {
-    return await StudentModel.find({ _id: { $in: ids } }).exec();
+    const updatedStudent = await StudentModel.findByIdAndUpdate(
+      studentId,
+      { $set: updateData },
+      { new: true, runValidators: true } // Return the updated document and run validators
+    ).exec();
+
+    if (!updatedStudent) {
+      throw new Error('Student not found');
+    }
+
+    return updatedStudent;
   } catch (error) {
-    console.error('Error finding students by IDs:', error);
-    throw new Error('Error finding students by IDs');
+    throw new Error(`Error updating student: ${error.message}`);
   }
 };
 
@@ -94,5 +109,5 @@ module.exports = {
   updateStudentById,
   deleteStudentById,
   submitQuizAttempt,
-  findStudentsByIds,
+  updateStudent,
 };

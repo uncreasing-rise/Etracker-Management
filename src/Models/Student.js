@@ -47,10 +47,6 @@ const MaterialAccessedSchema = new Schema({
 
 // Define the schema for notifications
 const NotificationSchema = new Schema({
-  notificationId: {
-    type: Schema.Types.ObjectId,
-    ref: 'Notification',
-  },
   date: { type: Date },
   message: { type: String },
   read: { type: Boolean, default: false },
