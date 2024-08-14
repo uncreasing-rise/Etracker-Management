@@ -1,4 +1,5 @@
-const AdminModel = require('../Models/Admin');
+const mongoose = require('mongoose');
+const AdminModel = require('../Models/Admin'); // Adjust the path to your Admin model
 const bcrypt = require('bcrypt');
 
 // Function to find an admin by email
@@ -12,60 +13,71 @@ const findAdminByEmail = async (email) => {
   }
 };
 
-// Function to create a new admin
-const createAdmin = async (adminData) => {
+// Get all admins
+const get = async () => {
   try {
-    // Check if password is provided
-    if (!adminData.password) {
-      throw new Error('Password is required');
-    }
-
-    // Hash the password before saving
-    const hashedPassword = await bcrypt.hash(adminData.password, 10); // 10 is the salt rounds
-
-    // Create a new admin object with the hashed password
-    const admin = new AdminModel({
-      ...adminData,
-      password: hashedPassword,
-    });
-
-    // Save the admin to the database
-    await admin.save();
-
-    // Return the created admin object
-    return admin;
-  } catch (error) {
-    console.error('Error creating admin:', error);
-    throw new Error('Error creating admin');
+    return await AdminModel.find().exec();
+  } catch (err) {
+    throw new Error(`Error fetching admins: ${err.message}`);
   }
 };
-// Function to update an admin by ID
-const updateAdminById = async (id, updateData) => {
+
+// Get admin by ID
+const getAdminById = async (userId) => {
   try {
-    const admin = await AdminModel.findByIdAndUpdate(id, updateData, {
+    return await AdminModel.findById(userId).exec();
+  } catch (err) {
+    throw new Error(`Error fetching admin by ID: ${err.message}`);
+  }
+};
+
+// Create a new admin
+const createAdmin = async (data) => {
+  try {
+    const admin = new AdminModel(data);
+    return await admin.save();
+  } catch (err) {
+    throw new Error(`Error creating admin: ${err.message}`);
+  }
+};
+
+// Update admin information
+const updateAdmin = async (userId, data) => {
+  try {
+    return await AdminModel.findByIdAndUpdate(userId, data, {
       new: true,
+      runValidators: true,
     }).exec();
-    return admin;
-  } catch (error) {
-    console.error('Error updating admin by ID:', error);
-    throw new Error('Error updating admin');
+  } catch (err) {
+    throw new Error(`Error updating admin: ${err.message}`);
   }
 };
 
-// Function to delete an admin by ID
-const deleteAdminById = async (id) => {
+// Delete admin by ID
+const deleteAdmin = async (userId) => {
   try {
-    const admin = await AdminModel.findByIdAndDelete(id).exec();
-    return admin;
+    return await AdminModel.findByIdAndDelete(userId).exec();
+  } catch (err) {
+    throw new Error(`Error deleting admin: ${err.message}`);
+  }
+};
+
+// Find admin by ID with specific fields
+const findAdminById = async (adminId) => {
+  try {
+    return await AdminModel.findById(adminId).select('profile.fullName').exec();
   } catch (error) {
-    console.error('Error deleting admin by ID:', error);
-    throw new Error('Error deleting admin');
+    console.error(`Error finding admin by ID: ${error.message}`);
+    throw new Error('Error finding admin');
   }
 };
 
 module.exports = {
-  findAdminByEmail,
+  get,
+  getAdminById,
   createAdmin,
-  updateAdminById,
-  deleteAdminById,
+  updateAdmin,
+  deleteAdmin,
+  findAdminByEmail,
+  findAdminById,
 };

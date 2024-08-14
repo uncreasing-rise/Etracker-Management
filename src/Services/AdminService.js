@@ -2,7 +2,7 @@ const adminDAL = require('../DALs/AdminDAL');
 
 // Get all admins
 const getAllAdminsService = async () => {
-  return adminDAL.getAllAdmins();
+  return adminDAL.get();
 };
 
 // Get admin by ID

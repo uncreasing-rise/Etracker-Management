@@ -12,9 +12,9 @@ const studentRouter = require('./Routes/StudentRouter');
 const adminRouter = require('./Routes/AdminRouter');
 const teacherRouter = require('./Routes/TeacherRouter');
 const quizRouter = require('./Routes/QuizRouter');
-const enrollmentRouter = require('./Routes/EnrollmentRouter');
 const classRouter = require('./Routes/ClassRouter');
 const assignmentRouter = require('./Routes/AssignmentRouter');
+const scoreRouter = require('./Routes/ScoreRouter');
 // Connect to the database
 connectDB()
   .then(() => console.log('MongoDB connected successfully'))
@@ -35,15 +35,13 @@ setupSwagger(app);
 
 // Define routes
 app.use('/api/auth', authRoutes); // Route for authentication
-app.use('/api/students', studentRouter); // Route for managing Students
-app.use('/api/teachers', teacherRouter); // Route for managing Teachers
-app.use('/api/admins', adminRouter); // Route for managing Admins
+app.use('/api/student', studentRouter); // Route for managing Students
+app.use('/api/teacher', teacherRouter); // Route for managing Teachers
+app.use('/api/admin', adminRouter); // Route for managing Admins
 app.use('/api/', quizRouter); // Route for managing Quizzes
 app.use('/api/', assignmentRouter); // Route for managing Quizzes
-
-app.use('/api/classes', classRouter); // Route for managing Classes
-app.use('/api/enrollments', enrollmentRouter); // Route for managing Enrollments
-
+app.use('/api/class', classRouter); // Route for managing Classes
+app.use('/api/', scoreRouter); // Route for managing Scores
 // Error handling middleware
 app.use(errorHandler);
 

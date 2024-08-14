@@ -1,51 +1,65 @@
+const {
+  SuccessResponse,
+  ErrorResponse,
+} = require('../Interfaces/MessageResponse'); // Adjust path as necessary
 const classService = require('../Services/ClassService');
 
+// Get all classes
 const getAllClassesController = async (req, res) => {
   try {
     const classes = await classService.getAllClassesService();
-    res.status(200).json(classes); // 200 OK is more appropriate here
+    res
+      .status(200)
+      .json(new SuccessResponse('Classes retrieved successfully', classes));
   } catch (error) {
     res
       .status(500)
-      .json({ message: 'Error retrieving classes', error: error.message });
+      .json(new ErrorResponse('Error retrieving classes', error.message));
   }
 };
 
+// Get class by ID
 const getClassByIdController = async (req, res) => {
   const { classId } = req.params;
   if (!classId) {
-    return res.status(400).json({ message: 'Class ID is required' });
+    return res.status(400).json(new ErrorResponse('Class ID is required'));
   }
 
   try {
     const classData = await classService.getClassByIdService(classId);
     if (classData) {
-      res.status(200).json(classData); // 200 OK is more appropriate here
+      res
+        .status(200)
+        .json(new SuccessResponse('Class retrieved successfully', classData));
     } else {
-      res.status(404).json({ message: 'Class not found' });
+      res.status(404).json(new ErrorResponse('Class not found'));
     }
   } catch (error) {
     res
       .status(500)
-      .json({ message: 'Error retrieving class', error: error.message });
+      .json(new ErrorResponse('Error retrieving class', error.message));
   }
 };
 
+// Create a new class
 const createClassController = async (req, res) => {
   try {
     const classData = await classService.createClassService(req.body);
-    res.status(201).json(classData); // 201 Created for successful creation
+    res
+      .status(201)
+      .json(new SuccessResponse('Class created successfully', classData));
   } catch (error) {
     res
       .status(400)
-      .json({ message: 'Error creating class', error: error.message });
+      .json(new ErrorResponse('Error creating class', error.message));
   }
 };
 
+// Update class information
 const updateClassController = async (req, res) => {
   const { classId } = req.params;
   if (!classId) {
-    return res.status(400).json({ message: 'Class ID is required' });
+    return res.status(400).json(new ErrorResponse('Class ID is required'));
   }
 
   try {
@@ -54,38 +68,41 @@ const updateClassController = async (req, res) => {
       req.body
     );
     if (updatedClass) {
-      res.status(200).json(updatedClass); // 200 OK for successful update
+      res
+        .status(200)
+        .json(new SuccessResponse('Class updated successfully', updatedClass));
     } else {
-      res.status(404).json({ message: 'Class not found' });
+      res.status(404).json(new ErrorResponse('Class not found'));
     }
   } catch (error) {
     res
       .status(400)
-      .json({ message: 'Error updating class', error: error.message });
+      .json(new ErrorResponse('Error updating class', error.message));
   }
 };
 
+// Delete class by ID
 const deleteClassController = async (req, res) => {
   const { classId } = req.params;
   if (!classId) {
-    return res.status(400).json({ message: 'Class ID is required' });
+    return res.status(400).json(new ErrorResponse('Class ID is required'));
   }
 
   try {
     const deletedClass = await classService.deleteClassService(classId);
     if (deletedClass) {
-      res.status(200).json({ message: 'Class deleted successfully' }); // 200 OK for successful deletion
+      res.status(200).json(new SuccessResponse('Class deleted successfully'));
     } else {
-      res.status(404).json({ message: 'Class not found' });
+      res.status(404).json(new ErrorResponse('Class not found'));
     }
   } catch (error) {
     res
       .status(500)
-      .json({ message: 'Error deleting class', error: error.message });
+      .json(new ErrorResponse('Error deleting class', error.message));
   }
 };
 
-// Controller function to add a student to a class
+// Add students to a class
 const addStudentsToClass = async (req, res) => {
   const { classId, studentIds } = req.body;
 
@@ -94,16 +111,18 @@ const addStudentsToClass = async (req, res) => {
       classId,
       studentIds
     );
-    res.status(200).json({
-      success: true,
-      message: 'Students added to class successfully',
-      data: updatedClass,
-    });
+    res
+      .status(200)
+      .json(
+        new SuccessResponse(
+          'Students added to class successfully',
+          updatedClass
+        )
+      );
   } catch (error) {
-    res.status(400).json({
-      success: false,
-      message: error.message,
-    });
+    res
+      .status(400)
+      .json(new ErrorResponse('Error adding students to class', error.message));
   }
 };
 
