@@ -1,22 +1,25 @@
-// src/Services/MaterialService.js
 const materialDAL = require('../DALs/MaterialDAL');
 const uploadFile = require('../Utils/UploadFile');
 
-const createMaterial = async (classId, teacherId, materialData, file) => {
+const createMaterial = async (classId, teacherId, materialData, files) => {
   if (!classId || !teacherId || !materialData) {
     throw new Error('Class ID, teacher ID, and material data are required');
   }
 
+  if (!Array.isArray(files) || files.length === 0) {
+    throw new Error('At least one file is required');
+  }
+
   try {
-    // Upload the file and get the URL
-    const fileUrl = await uploadFile(file);
+    // Upload the files and get the URLs
+    const fileUrls = await Promise.all(files.map(file => uploadFile(file)));
 
     // Create the material
     const material = await materialDAL.createMaterial({
       ...materialData,
       classId,
       teacherId,
-      fileUrl,
+      fileUrls,
     });
 
     return material;
@@ -31,7 +34,11 @@ const getMaterialsByClassId = async (classId) => {
   }
 
   try {
-    return await materialDAL.getMaterialsByClassId(classId);
+    const materials = await materialDAL.getMaterialsByClassId(classId);
+    if (materials.length === 0) {
+      throw new Error('No materials found for the given class ID');
+    }
+    return materials;
   } catch (error) {
     throw new Error(`Error getting materials by class ID: ${error.message}`);
   }
@@ -43,7 +50,11 @@ const getMaterialById = async (materialId) => {
   }
 
   try {
-    return await materialDAL.getMaterialById(materialId);
+    const material = await materialDAL.getMaterialById(materialId);
+    if (!material) {
+      throw new Error('Material not found');
+    }
+    return material;
   } catch (error) {
     throw new Error(`Error getting material by ID: ${error.message}`);
   }
@@ -55,7 +66,11 @@ const updateMaterial = async (materialId, updateData) => {
   }
 
   try {
-    return await materialDAL.updateMaterial(materialId, updateData);
+    const updatedMaterial = await materialDAL.updateMaterial(materialId, updateData);
+    if (!updatedMaterial) {
+      throw new Error('Material not found');
+    }
+    return updatedMaterial;
   } catch (error) {
     throw new Error(`Error updating material: ${error.message}`);
   }
@@ -67,7 +82,11 @@ const deleteMaterial = async (materialId) => {
   }
 
   try {
-    return await materialDAL.deleteMaterial(materialId);
+    const deletedMaterial = await materialDAL.deleteMaterial(materialId);
+    if (!deletedMaterial) {
+      throw new Error('Material not found');
+    }
+    return deletedMaterial;
   } catch (error) {
     throw new Error(`Error deleting material: ${error.message}`);
   }

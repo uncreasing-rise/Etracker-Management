@@ -7,10 +7,12 @@ const materialService = require('../Services/MaterialService');
 // Create a new material
 const createMaterialController = async (req, res) => {
   const { classId, teacherId } = req.params;
-  const file = req.file;
+  const files = req.files; // Expecting multiple files
 
-  if (!file) {
-    return res.status(400).json(new ErrorResponse('File is required'));
+  if (!files || files.length === 0) {
+    return res
+      .status(400)
+      .json(new ErrorResponse('At least one file is required'));
   }
 
   try {
@@ -18,7 +20,7 @@ const createMaterialController = async (req, res) => {
       classId,
       teacherId,
       req.body,
-      file
+      files
     );
     res
       .status(201)
@@ -33,6 +35,10 @@ const createMaterialController = async (req, res) => {
 // Get materials by class ID
 const getMaterialsByClassIdController = async (req, res) => {
   const { classId } = req.params;
+
+  if (!classId) {
+    return res.status(400).json(new ErrorResponse('Class ID is required'));
+  }
 
   try {
     const materials = await materialService.getMaterialsByClassId(classId);
@@ -49,6 +55,10 @@ const getMaterialsByClassIdController = async (req, res) => {
 // Get material by ID
 const getMaterialByIdController = async (req, res) => {
   const { materialId } = req.params;
+
+  if (!materialId) {
+    return res.status(400).json(new ErrorResponse('Material ID is required'));
+  }
 
   try {
     const material = await materialService.getMaterialById(materialId);
@@ -69,6 +79,10 @@ const getMaterialByIdController = async (req, res) => {
 // Update material information
 const updateMaterialController = async (req, res) => {
   const { materialId } = req.params;
+
+  if (!materialId) {
+    return res.status(400).json(new ErrorResponse('Material ID is required'));
+  }
 
   try {
     const updatedMaterial = await materialService.updateMaterial(
@@ -94,6 +108,10 @@ const updateMaterialController = async (req, res) => {
 // Delete material by ID
 const deleteMaterialController = async (req, res) => {
   const { materialId } = req.params;
+
+  if (!materialId) {
+    return res.status(400).json(new ErrorResponse('Material ID is required'));
+  }
 
   try {
     const deletedMaterial = await materialService.deleteMaterial(materialId);
