@@ -1,6 +1,5 @@
 const express = require('express');
 const connectDB = require('./Config/Db');
-const { setupSwagger } = require('./swagger');
 const cors = require('cors');
 const errorHandler = require('./Middlewares/ErrorHandler');
 const setHeaders = require('./Middlewares/Header');
@@ -15,6 +14,8 @@ const quizRouter = require('./Routes/QuizRouter');
 const classRouter = require('./Routes/ClassRouter');
 const assignmentRouter = require('./Routes/AssignmentRouter');
 const scoreRouter = require('./Routes/ScoreRouter');
+const sessionRouter = require('./Routes/SessionRouter');
+const attendanceRouter = require('./Routes/AttendanceRouter');
 // Connect to the database
 connectDB()
   .then(() => console.log('MongoDB connected successfully'))
@@ -30,9 +31,6 @@ app.use(setHeaders);
 // Middleware to parse JSON requests
 app.use(express.json());
 
-// Set up Swagger for API documentation
-setupSwagger(app);
-
 // Define routes
 app.use('/api/auth', authRoutes); // Route for authentication
 app.use('/api/student', studentRouter); // Route for managing Students
@@ -42,6 +40,8 @@ app.use('/api/', quizRouter); // Route for managing Quizzes
 app.use('/api/', assignmentRouter); // Route for managing Quizzes
 app.use('/api/class', classRouter); // Route for managing Classes
 app.use('/api/', scoreRouter); // Route for managing Scores
+app.use('/api/', sessionRouter); // Route for managing Sessions
+app.use('/api/', attendanceRouter); // Route for managing Attendance
 // Error handling middleware
 app.use(errorHandler);
 

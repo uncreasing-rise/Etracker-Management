@@ -1,20 +1,37 @@
 const assignmentService = require('../Services/AssignmentService');
+const {
+  SuccessResponse,
+  ErrorResponse,
+} = require('../Interfaces/MessageResponse'); // Adjust path as necessary
+const {
+  SUCCESS_CREATE,
+  SUCCESS_UPDATE,
+  ERROR_MISSING_FIELDS,
+  ERROR_NOT_FOUND,
+  ERROR_INTERNAL_SERVER,
+  SUCCESS_DELETE,
+} = require('../Constants/ResponseMessages');
 
 // Controller to get all assignments for a specific class
 const getAllAssignmentsController = async (req, res) => {
   const { classId } = req.params;
   if (!classId) {
-    return res.status(400).json({ message: 'Class ID is required' });
+    return res.status(400).json(new ErrorResponse(ERROR_MISSING_FIELDS));
   }
 
   try {
     const assignments =
       await assignmentService.getAllAssignmentsService(classId);
-    res.status(200).json(assignments); // 200 OK
+    res
+      .status(200)
+      .json(
+        new SuccessResponse('Assignments retrieved successfully', assignments)
+      );
   } catch (error) {
+    console.error('Error retrieving assignments:', error);
     res
       .status(500)
-      .json({ message: 'Error retrieving assignments', error: error.message });
+      .json(new ErrorResponse(ERROR_INTERNAL_SERVER, error.message));
   }
 };
 
@@ -22,9 +39,7 @@ const getAllAssignmentsController = async (req, res) => {
 const getAssignmentByIdController = async (req, res) => {
   const { classId, assignmentId } = req.params;
   if (!classId || !assignmentId) {
-    return res
-      .status(400)
-      .json({ message: 'Class ID and Assignment ID are required' });
+    return res.status(400).json(new ErrorResponse(ERROR_MISSING_FIELDS));
   }
 
   try {
@@ -33,16 +48,19 @@ const getAssignmentByIdController = async (req, res) => {
       assignmentId
     );
     if (assignment) {
-      res.status(200).json(assignment); // 200 OK
+      res
+        .status(200)
+        .json(
+          new SuccessResponse('Assignment retrieved successfully', assignment)
+        );
     } else {
-      res.status(404).json({
-        message: 'Assignment not found or not part of the specified class',
-      });
+      res.status(404).json(new ErrorResponse(ERROR_NOT_FOUND));
     }
   } catch (error) {
+    console.error('Error retrieving assignment:', error);
     res
       .status(500)
-      .json({ message: 'Error retrieving assignment', error: error.message });
+      .json(new ErrorResponse(ERROR_INTERNAL_SERVER, error.message));
   }
 };
 
@@ -50,7 +68,7 @@ const getAssignmentByIdController = async (req, res) => {
 const createAssignmentController = async (req, res) => {
   const { classId } = req.params;
   if (!classId) {
-    return res.status(400).json({ message: 'Class ID is required' });
+    return res.status(400).json(new ErrorResponse(ERROR_MISSING_FIELDS));
   }
 
   try {
@@ -58,11 +76,12 @@ const createAssignmentController = async (req, res) => {
       classId,
       req.body
     );
-    res.status(201).json(assignmentData); // 201 Created
+    res.status(201).json(new SuccessResponse(SUCCESS_CREATE, assignmentData));
   } catch (error) {
+    console.error('Error creating assignment:', error);
     res
       .status(400)
-      .json({ message: 'Error creating assignment', error: error.message });
+      .json(new ErrorResponse('Error creating assignment', error.message));
   }
 };
 
@@ -70,9 +89,7 @@ const createAssignmentController = async (req, res) => {
 const updateAssignmentController = async (req, res) => {
   const { classId, assignmentId } = req.params;
   if (!classId || !assignmentId) {
-    return res
-      .status(400)
-      .json({ message: 'Class ID and Assignment ID are required' });
+    return res.status(400).json(new ErrorResponse(ERROR_MISSING_FIELDS));
   }
 
   try {
@@ -82,16 +99,17 @@ const updateAssignmentController = async (req, res) => {
       req.body
     );
     if (updatedAssignment) {
-      res.status(200).json(updatedAssignment); // 200 OK
+      res
+        .status(200)
+        .json(new SuccessResponse(SUCCESS_UPDATE, updatedAssignment));
     } else {
-      res.status(404).json({
-        message: 'Assignment not found or not part of the specified class',
-      });
+      res.status(404).json(new ErrorResponse(ERROR_NOT_FOUND));
     }
   } catch (error) {
+    console.error('Error updating assignment:', error);
     res
       .status(400)
-      .json({ message: 'Error updating assignment', error: error.message });
+      .json(new ErrorResponse('Error updating assignment', error.message));
   }
 };
 
@@ -99,9 +117,7 @@ const updateAssignmentController = async (req, res) => {
 const deleteAssignmentController = async (req, res) => {
   const { classId, assignmentId } = req.params;
   if (!classId || !assignmentId) {
-    return res
-      .status(400)
-      .json({ message: 'Class ID and Assignment ID are required' });
+    return res.status(400).json(new ErrorResponse(ERROR_MISSING_FIELDS));
   }
 
   try {
@@ -110,16 +126,15 @@ const deleteAssignmentController = async (req, res) => {
       assignmentId
     );
     if (deletedAssignment) {
-      res.status(200).json({ message: 'Assignment deleted successfully' }); // 200 OK
+      res.status(200).json(new SuccessResponse(SUCCESS_DELETE));
     } else {
-      res.status(404).json({
-        message: 'Assignment not found or not part of the specified class',
-      });
+      res.status(404).json(new ErrorResponse(ERROR_NOT_FOUND));
     }
   } catch (error) {
+    console.error('Error deleting assignment:', error);
     res
       .status(500)
-      .json({ message: 'Error deleting assignment', error: error.message });
+      .json(new ErrorResponse(ERROR_INTERNAL_SERVER, error.message));
   }
 };
 

@@ -3,6 +3,12 @@ const {
   ErrorResponse,
 } = require('../Interfaces/MessageResponse'); // Adjust path as necessary
 const classService = require('../Services/ClassService');
+const {
+  SUCCESS_CREATE_UPDATE,
+  ERROR_MISSING_FIELDS,
+  ERROR_NOT_FOUND,
+  ERROR_INTERNAL_SERVER,
+} = require('../Constants/ResponseMessages');
 
 // Get all classes
 const getAllClassesController = async (req, res) => {
@@ -12,9 +18,10 @@ const getAllClassesController = async (req, res) => {
       .status(200)
       .json(new SuccessResponse('Classes retrieved successfully', classes));
   } catch (error) {
+    console.error('Error retrieving classes:', error);
     res
       .status(500)
-      .json(new ErrorResponse('Error retrieving classes', error.message));
+      .json(new ErrorResponse(ERROR_INTERNAL_SERVER, error.message));
   }
 };
 
@@ -22,7 +29,7 @@ const getAllClassesController = async (req, res) => {
 const getClassByIdController = async (req, res) => {
   const { classId } = req.params;
   if (!classId) {
-    return res.status(400).json(new ErrorResponse('Class ID is required'));
+    return res.status(400).json(new ErrorResponse(ERROR_MISSING_FIELDS));
   }
 
   try {
@@ -32,12 +39,13 @@ const getClassByIdController = async (req, res) => {
         .status(200)
         .json(new SuccessResponse('Class retrieved successfully', classData));
     } else {
-      res.status(404).json(new ErrorResponse('Class not found'));
+      res.status(404).json(new ErrorResponse(ERROR_NOT_FOUND));
     }
   } catch (error) {
+    console.error('Error retrieving class:', error);
     res
       .status(500)
-      .json(new ErrorResponse('Error retrieving class', error.message));
+      .json(new ErrorResponse(ERROR_INTERNAL_SERVER, error.message));
   }
 };
 
@@ -49,6 +57,7 @@ const createClassController = async (req, res) => {
       .status(201)
       .json(new SuccessResponse('Class created successfully', classData));
   } catch (error) {
+    console.error('Error creating class:', error);
     res
       .status(400)
       .json(new ErrorResponse('Error creating class', error.message));
@@ -59,7 +68,7 @@ const createClassController = async (req, res) => {
 const updateClassController = async (req, res) => {
   const { classId } = req.params;
   if (!classId) {
-    return res.status(400).json(new ErrorResponse('Class ID is required'));
+    return res.status(400).json(new ErrorResponse(ERROR_MISSING_FIELDS));
   }
 
   try {
@@ -72,9 +81,10 @@ const updateClassController = async (req, res) => {
         .status(200)
         .json(new SuccessResponse('Class updated successfully', updatedClass));
     } else {
-      res.status(404).json(new ErrorResponse('Class not found'));
+      res.status(404).json(new ErrorResponse(ERROR_NOT_FOUND));
     }
   } catch (error) {
+    console.error('Error updating class:', error);
     res
       .status(400)
       .json(new ErrorResponse('Error updating class', error.message));
@@ -85,7 +95,7 @@ const updateClassController = async (req, res) => {
 const deleteClassController = async (req, res) => {
   const { classId } = req.params;
   if (!classId) {
-    return res.status(400).json(new ErrorResponse('Class ID is required'));
+    return res.status(400).json(new ErrorResponse(ERROR_MISSING_FIELDS));
   }
 
   try {
@@ -93,18 +103,24 @@ const deleteClassController = async (req, res) => {
     if (deletedClass) {
       res.status(200).json(new SuccessResponse('Class deleted successfully'));
     } else {
-      res.status(404).json(new ErrorResponse('Class not found'));
+      res.status(404).json(new ErrorResponse(ERROR_NOT_FOUND));
     }
   } catch (error) {
+    console.error('Error deleting class:', error);
     res
       .status(500)
-      .json(new ErrorResponse('Error deleting class', error.message));
+      .json(new ErrorResponse(ERROR_INTERNAL_SERVER, error.message));
   }
 };
 
 // Add students to a class
 const addStudentsToClass = async (req, res) => {
-  const { classId, studentIds } = req.body;
+  const { studentIds } = req.body;
+  const { classId } = req.params;
+
+  if (!studentIds || !Array.isArray(studentIds) || studentIds.length === 0) {
+    return res.status(400).json(new ErrorResponse(ERROR_MISSING_FIELDS));
+  }
 
   try {
     const updatedClass = await classService.addStudentsToClass(
@@ -120,6 +136,7 @@ const addStudentsToClass = async (req, res) => {
         )
       );
   } catch (error) {
+    console.error('Error adding students to class:', error);
     res
       .status(400)
       .json(new ErrorResponse('Error adding students to class', error.message));

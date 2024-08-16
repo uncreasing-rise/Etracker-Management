@@ -9,6 +9,15 @@ const {
   SuccessResponse,
   ErrorResponse,
 } = require('../Interfaces/MessageResponse'); // Adjust path as necessary
+const {
+  SUCCESS_CREATE,
+  SUCCESS_UPDATE,
+  ERROR_MISSING_FIELDS,
+  ERROR_NOT_FOUND,
+  ERROR_INTERNAL_SERVER,
+  SUCCESS_DELETE,
+  SUCCESS_RETRIEVE,
+} = require('../Constants/ResponseMessages');
 
 /**
  * Get all admins
@@ -18,12 +27,12 @@ const {
 const getAllAdminsController = async (req, res) => {
   try {
     const admins = await getAllAdminsService();
-    res
-      .status(200)
-      .json(new SuccessResponse('Admins retrieved successfully', admins));
+    res.status(200).json(new SuccessResponse(SUCCESS_RETRIEVE, admins));
   } catch (error) {
     console.error('Error getting all admins:', error);
-    res.status(500).json(new ErrorResponse('An error occurred', error.message));
+    res
+      .status(500)
+      .json(new ErrorResponse(ERROR_INTERNAL_SERVER, error.message));
   }
 };
 
@@ -33,19 +42,19 @@ const getAllAdminsController = async (req, res) => {
  * @param {Object} res - Express response object
  */
 const getAdminByIdController = async (req, res) => {
-  const { userId } = req.params;
+  const { adminId } = req.params;
   try {
-    const admin = await getAdminByIdService(userId);
+    const admin = await getAdminByIdService(adminId);
     if (admin) {
-      res
-        .status(200)
-        .json(new SuccessResponse('Admin retrieved successfully', admin));
+      res.status(200).json(new SuccessResponse(SUCCESS_RETRIEVE, admin));
     } else {
-      res.status(404).json(new ErrorResponse('Admin not found'));
+      res.status(404).json(new ErrorResponse(ERROR_NOT_FOUND));
     }
   } catch (error) {
     console.error('Error getting admin by ID:', error);
-    res.status(500).json(new ErrorResponse('An error occurred', error.message));
+    res
+      .status(500)
+      .json(new ErrorResponse(ERROR_INTERNAL_SERVER, error.message));
   }
 };
 
@@ -57,12 +66,12 @@ const getAdminByIdController = async (req, res) => {
 const createAdminController = async (req, res) => {
   try {
     const admin = await createAdminService(req.body);
-    res
-      .status(201)
-      .json(new SuccessResponse('Admin created successfully', admin));
+    res.status(201).json(new SuccessResponse(SUCCESS_CREATE, admin));
   } catch (error) {
     console.error('Error creating admin:', error);
-    res.status(400).json(new ErrorResponse('An error occurred', error.message));
+    res
+      .status(400)
+      .json(new ErrorResponse(ERROR_MISSING_FIELDS, error.message));
   }
 };
 
@@ -72,19 +81,19 @@ const createAdminController = async (req, res) => {
  * @param {Object} res - Express response object
  */
 const updateAdminController = async (req, res) => {
-  const { userId } = req.params;
+  const { adminId } = req.params;
   try {
-    const admin = await updateAdminService(userId, req.body);
+    const admin = await updateAdminService(adminId, req.body);
     if (admin) {
-      res
-        .status(200)
-        .json(new SuccessResponse('Admin updated successfully', admin));
+      res.status(200).json(new SuccessResponse(SUCCESS_UPDATE, admin));
     } else {
-      res.status(404).json(new ErrorResponse('Admin not found'));
+      res.status(404).json(new ErrorResponse(ERROR_NOT_FOUND));
     }
   } catch (error) {
     console.error('Error updating admin:', error);
-    res.status(400).json(new ErrorResponse('An error occurred', error.message));
+    res
+      .status(400)
+      .json(new ErrorResponse(ERROR_MISSING_FIELDS, error.message));
   }
 };
 
@@ -94,17 +103,19 @@ const updateAdminController = async (req, res) => {
  * @param {Object} res - Express response object
  */
 const deleteAdminController = async (req, res) => {
-  const { userId } = req.params;
+  const { adminId } = req.params;
   try {
-    const admin = await deleteAdminService(userId);
-    if (admin) {
-      res.status(200).json(new SuccessResponse('Admin deleted successfully'));
+    const result = await deleteAdminService(adminId);
+    if (result) {
+      res.status(200).json(new SuccessResponse(SUCCESS_DELETE));
     } else {
-      res.status(404).json(new ErrorResponse('Admin not found'));
+      res.status(404).json(new ErrorResponse(ERROR_NOT_FOUND));
     }
   } catch (error) {
     console.error('Error deleting admin:', error);
-    res.status(500).json(new ErrorResponse('An error occurred', error.message));
+    res
+      .status(500)
+      .json(new ErrorResponse(ERROR_INTERNAL_SERVER, error.message));
   }
 };
 

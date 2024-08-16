@@ -1,4 +1,4 @@
-const ScoreModel = require('../Models/Score');
+const ScoreModel = require('../models/Score');
 
 // Create a new score
 const createScore = async (scoreData) => {
@@ -7,50 +7,33 @@ const createScore = async (scoreData) => {
     throw new Error('Admin ID (createdBy) is required');
   }
 
-  try {
-    // Create a new score using the scoreData
-    const score = new ScoreModel(scoreData);
-    return await score.save();
-  } catch (err) {
-    // Handle and throw errors if any
-    throw new Error('Error creating score: ' + err.message);
-  }
+  // Create a new score using the scoreData
+  const score = new ScoreModel(scoreData);
+  return await score.save();
 };
 
 // Get all scores for a specific student in a class
 const getScoresByStudentAndClass = async (studentId, classId) => {
-  try {
-    return await ScoreModel.find({ studentId, classId })
-      .populate('studentId', 'profile.fullName')
-      .populate('classId', 'className')
-      .exec();
-  } catch (err) {
-    throw new Error(`Error retrieving scores: ${err.message}`);
-  }
+  return await ScoreModel.find({ studentId, classId })
+    .populate('studentId', 'profile.fullName')
+    .populate('classId', 'className')
+    .exec();
 };
 
 // Update an existing score by ID
 const updateScore = async (scoreId, updatedData) => {
-  try {
-    return await ScoreModel.findByIdAndUpdate(scoreId, updatedData, {
-      new: true,
-      runValidators: true, // Ensures validation during update
-    })
-      .populate('studentId', 'profile.fullName')
-      .populate('classId', 'className')
-      .exec();
-  } catch (err) {
-    throw new Error(`Error updating score: ${err.message}`);
-  }
+  return await ScoreModel.findByIdAndUpdate(scoreId, updatedData, {
+    new: true,
+    runValidators: true, // Ensures validation during update
+  })
+    .populate('studentId', 'profile.fullName')
+    .populate('classId', 'className')
+    .exec();
 };
 
 // Delete a score by ID
 const deleteScore = async (scoreId) => {
-  try {
-    return await ScoreModel.findByIdAndDelete(scoreId);
-  } catch (err) {
-    throw new Error(`Error deleting score: ${err.message}`);
-  }
+  return await ScoreModel.findByIdAndDelete(scoreId);
 };
 
 // Get all scores in a specific class
@@ -60,7 +43,6 @@ const getAllScoresInClass = async (classId) => {
     .populate('classId', 'className') // Populate class details
     .populate('createdBy', 'profile.fullName') // Populate admin details
     .populate('updatedBy', 'profile.fullName') // Populate admin details
-
     .exec();
 };
 

@@ -3,7 +3,13 @@ const {
   ErrorResponse,
 } = require('../Interfaces/MessageResponse'); // Adjust path as necessary
 const { login } = require('../Services/LoginService');
+const {
+  ERROR_MISSING_FIELDS,
+  ERROR_INVALID_CREDENTIALS,
+  ERROR_INTERNAL_SERVER,
+} = require('../Constants/ResponseMessages');
 
+// Login controller
 const loginController = async (req, res) => {
   try {
     const { username, password } = req.body;
@@ -11,9 +17,7 @@ const loginController = async (req, res) => {
 
     // Check if username and password are provided
     if (!username || !password) {
-      return res
-        .status(400)
-        .json(new ErrorResponse('Username and password are required'));
+      return res.status(400).json(new ErrorResponse(ERROR_MISSING_FIELDS));
     }
 
     // Call the login function from the service
@@ -21,9 +25,7 @@ const loginController = async (req, res) => {
 
     // Check if login was successful
     if (!user || !token) {
-      return res
-        .status(401)
-        .json(new ErrorResponse('Invalid username or password'));
+      return res.status(401).json(new ErrorResponse(ERROR_INVALID_CREDENTIALS));
     }
 
     // Respond with success
@@ -34,7 +36,7 @@ const loginController = async (req, res) => {
     console.error('Login error:', error.message);
     res
       .status(500)
-      .json(new ErrorResponse('Internal server error', error.message));
+      .json(new ErrorResponse(ERROR_INTERNAL_SERVER, error.message));
   }
 };
 

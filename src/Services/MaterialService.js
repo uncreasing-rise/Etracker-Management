@@ -12,7 +12,7 @@ const createMaterial = async (classId, teacherId, materialData, files) => {
 
   try {
     // Upload the files and get the URLs
-    const fileUrls = await Promise.all(files.map(file => uploadFile(file)));
+    const fileUrls = await Promise.all(files.map((file) => uploadFile(file)));
 
     // Create the material
     const material = await materialDAL.createMaterial({
@@ -66,7 +66,10 @@ const updateMaterial = async (materialId, updateData) => {
   }
 
   try {
-    const updatedMaterial = await materialDAL.updateMaterial(materialId, updateData);
+    const updatedMaterial = await materialDAL.updateMaterial(
+      materialId,
+      updateData
+    );
     if (!updatedMaterial) {
       throw new Error('Material not found');
     }

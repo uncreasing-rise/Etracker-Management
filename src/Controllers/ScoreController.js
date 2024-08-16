@@ -3,40 +3,39 @@ const {
   ErrorResponse,
 } = require('../Interfaces/MessageResponse'); // Adjust path as necessary
 const scoreService = require('../Services/ScoreService');
+const {
+  ERROR_ADMIN_ID_REQUIRED,
+  ERROR_SCORE_ID_REQUIRED,
+  ERROR_RETRIEVAL,
+  ERROR_CREATION,
+  ERROR_UPDATE,
+  ERROR_DELETION,
+  ERROR_FILE_DOWNLOAD,
+} = require('../Constants/ResponseMessages');
 
 // Create a new score
 const createScore = async (req, res) => {
   try {
-    // Extract data from request
     const scoreData = req.body;
     const createdBy = req.user.id; // Ensure this is the correct field for the admin ID
 
-    // Check if createdBy is present
     if (!createdBy) {
-      return res
-        .status(400)
-        .json(new ErrorResponse('Admin ID (createdBy) is required'));
+      return res.status(400).json(new ErrorResponse(ERROR_ADMIN_ID_REQUIRED));
     }
 
-    // Add createdBy to scoreData
     const newScoreData = {
       ...scoreData,
-      createdBy, // Set createdBy here
+      createdBy,
     };
-    console.log('New score data:', newScoreData); // Logging the data being created
+    console.log('New score data:', newScoreData);
 
-    // Call the service to create the score
     const newScore = await scoreService.createScore(newScoreData);
-
-    // Respond with the created score
     res
       .status(201)
       .json(new SuccessResponse('Score created successfully', newScore));
   } catch (err) {
-    console.error(`Error creating score: ${err.message}`); // Log the error for debugging
-    res
-      .status(500)
-      .json(new ErrorResponse('Error creating score', err.message));
+    console.error(`Error creating score: ${err.message}`);
+    res.status(500).json(new ErrorResponse(ERROR_CREATION, err.message));
   }
 };
 
@@ -63,10 +62,8 @@ const getScoresByStudentAndClass = async (req, res) => {
       .status(200)
       .json(new SuccessResponse('Scores retrieved successfully', scores));
   } catch (err) {
-    console.error(`Error retrieving scores: ${err.message}`); // Log the error
-    res
-      .status(500)
-      .json(new ErrorResponse('Error retrieving scores', err.message));
+    console.error(`Error retrieving scores: ${err.message}`);
+    res.status(500).json(new ErrorResponse(ERROR_RETRIEVAL, err.message));
   }
 };
 
@@ -76,6 +73,11 @@ const updateScore = async (req, res) => {
     const { scoreId } = req.params;
     const updatedData = req.body;
     const updatedBy = req.user.id;
+
+    if (!scoreId) {
+      return res.status(400).json(new ErrorResponse(ERROR_SCORE_ID_REQUIRED));
+    }
+
     const updatedScore = await scoreService.updateScore(
       scoreId,
       updatedData,
@@ -94,10 +96,8 @@ const updateScore = async (req, res) => {
       .status(200)
       .json(new SuccessResponse('Score updated successfully', updatedScore));
   } catch (err) {
-    console.error(`Error updating score: ${err.message}`); // Log the error
-    res
-      .status(500)
-      .json(new ErrorResponse('Error updating score', err.message));
+    console.error(`Error updating score: ${err.message}`);
+    res.status(500).json(new ErrorResponse(ERROR_UPDATE, err.message));
   }
 };
 
@@ -106,22 +106,15 @@ const deleteScore = async (req, res) => {
   try {
     const { scoreId } = req.params;
 
-    // Ensure that scoreId is valid
     if (!scoreId) {
-      return res.status(400).json(new ErrorResponse('Score ID is required'));
+      return res.status(400).json(new ErrorResponse(ERROR_SCORE_ID_REQUIRED));
     }
 
-    // Call the service to delete the score
     await scoreService.deleteScore(scoreId);
-
-    // Respond with a success message
     res.status(200).json(new SuccessResponse('Score deleted successfully'));
   } catch (err) {
-    // Log the error and respond with a 500 status
     console.error(`Error deleting score: ${err.message}`);
-    res
-      .status(500)
-      .json(new ErrorResponse('Error deleting score', err.message));
+    res.status(500).json(new ErrorResponse(ERROR_DELETION, err.message));
   }
 };
 
@@ -145,12 +138,30 @@ const getAllScoresInClass = async (req, res) => {
       .status(200)
       .json(new SuccessResponse('Scores retrieved successfully', scores));
   } catch (err) {
-    console.error(`Error retrieving scores for class: ${err.message}`); // Log the error
-    res
-      .status(500)
-      .json(
-        new ErrorResponse('Error retrieving scores for class', err.message)
-      );
+    console.error(`Error retrieving scores for class: ${err.message}`);
+    res.status(500).json(new ErrorResponse(ERROR_RETRIEVAL, err.message));
+  }
+};
+
+// Download scores report
+const downloadScoresReport = async (req, res) => {
+  try {
+    const { classId } = req.params;
+    const filePath = `./reports/scores_${classId}.pdf`;
+
+    await scoreService.createScoresReport(classId, filePath);
+
+    res.download(filePath, 'scores_report.pdf', (err) => {
+      if (err) {
+        console.error('Error downloading file:', err.message);
+        res
+          .status(500)
+          .json(new ErrorResponse(ERROR_FILE_DOWNLOAD, err.message));
+      }
+    });
+  } catch (error) {
+    console.error('Error creating report:', error.message);
+    res.status(500).json(new ErrorResponse(ERROR_FILE_DOWNLOAD, error.message));
   }
 };
 
@@ -160,4 +171,5 @@ module.exports = {
   updateScore,
   deleteScore,
   getAllScoresInClass,
+  downloadScoresReport,
 };

@@ -23,7 +23,7 @@ const AssignmentSchema = new Schema({
     enum: ['Pending', 'Submitted', 'Graded'],
     required: true,
   },
-  createdDate: { type: Date, default: Date.now }, // Default to current date if not provided
+  createdDate: { type: Date, default: Date.now },
 });
 
 // Create and export the assignment model

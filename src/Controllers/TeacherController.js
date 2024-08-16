@@ -1,7 +1,7 @@
 const {
   SuccessResponse,
   ErrorResponse,
-} = require('../Interfaces/MessageResponse'); // Adjust path as necessary
+} = require('../Interfaces/MessageResponse');
 const {
   getAllTeachersService,
   getTeacherByIdService,
@@ -9,6 +9,13 @@ const {
   updateTeacherService,
   deleteTeacherService,
 } = require('../Services/TeacherService');
+const {
+  ERROR_TEACHER_NOT_FOUND,
+  ERROR_TEACHER_CREATION,
+  ERROR_TEACHER_UPDATE,
+  ERROR_TEACHER_DELETION,
+  ERROR_TEACHER_RETRIEVAL,
+} = require('../Constants/ResponseMessages');
 
 /**
  * Get all teachers
@@ -22,10 +29,10 @@ const getAllTeachersController = async (req, res) => {
       .status(200)
       .json(new SuccessResponse('Teachers retrieved successfully', teachers));
   } catch (error) {
-    console.error('Error getting all teachers:', error);
+    console.error(`Error getting all teachers: ${error.message}`);
     res
       .status(500)
-      .json(new ErrorResponse('Error retrieving teachers', error.message));
+      .json(new ErrorResponse(ERROR_TEACHER_RETRIEVAL, error.message));
   }
 };
 
@@ -43,13 +50,13 @@ const getTeacherByIdController = async (req, res) => {
         .status(200)
         .json(new SuccessResponse('Teacher retrieved successfully', teacher));
     } else {
-      res.status(404).json(new ErrorResponse('Teacher not found'));
+      res.status(404).json(new ErrorResponse(ERROR_TEACHER_NOT_FOUND));
     }
   } catch (error) {
-    console.error('Error getting teacher by ID:', error);
+    console.error(`Error getting teacher by ID: ${error.message}`);
     res
       .status(500)
-      .json(new ErrorResponse('Error retrieving teacher', error.message));
+      .json(new ErrorResponse(ERROR_TEACHER_RETRIEVAL, error.message));
   }
 };
 
@@ -65,10 +72,10 @@ const createTeacherController = async (req, res) => {
       .status(201)
       .json(new SuccessResponse('Teacher created successfully', teacher));
   } catch (error) {
-    console.error('Error creating teacher:', error);
+    console.error(`Error creating teacher: ${error.message}`);
     res
       .status(400)
-      .json(new ErrorResponse('Error creating teacher', error.message));
+      .json(new ErrorResponse(ERROR_TEACHER_CREATION, error.message));
   }
 };
 
@@ -86,13 +93,13 @@ const updateTeacherController = async (req, res) => {
         .status(200)
         .json(new SuccessResponse('Teacher updated successfully', teacher));
     } else {
-      res.status(404).json(new ErrorResponse('Teacher not found'));
+      res.status(404).json(new ErrorResponse(ERROR_TEACHER_NOT_FOUND));
     }
   } catch (error) {
-    console.error('Error updating teacher:', error);
+    console.error(`Error updating teacher: ${error.message}`);
     res
       .status(400)
-      .json(new ErrorResponse('Error updating teacher', error.message));
+      .json(new ErrorResponse(ERROR_TEACHER_UPDATE, error.message));
   }
 };
 
@@ -108,13 +115,13 @@ const deleteTeacherController = async (req, res) => {
     if (result) {
       res.status(200).json(new SuccessResponse('Teacher deleted successfully'));
     } else {
-      res.status(404).json(new ErrorResponse('Teacher not found'));
+      res.status(404).json(new ErrorResponse(ERROR_TEACHER_NOT_FOUND));
     }
   } catch (error) {
-    console.error('Error deleting teacher:', error);
+    console.error(`Error deleting teacher: ${error.message}`);
     res
       .status(500)
-      .json(new ErrorResponse('Error deleting teacher', error.message));
+      .json(new ErrorResponse(ERROR_TEACHER_DELETION, error.message));
   }
 };
 

@@ -1,5 +1,6 @@
 const scoreDAL = require('../DALs/ScoreDAL');
 const AdminDAL = require('../DALs/AdminDAL');
+const { generateScoresPDF } = require('../Utils/ScorePDF');
 
 const createScore = async (scoreData) => {
   // Create a new data object including createdBy
@@ -45,6 +46,16 @@ const getAdminDetails = async (adminId) => {
   }
   return admin;
 };
+
+const createScoresReport = async (classId, filePath) => {
+  try {
+    await generateScoresPDF(classId, filePath);
+    // Additional logic if needed
+  } catch (error) {
+    throw new Error(`Failed to create scores report: ${error.message}`);
+  }
+};
+
 module.exports = {
   createScore,
   getScoresByStudentAndClass,
@@ -52,4 +63,5 @@ module.exports = {
   deleteScore,
   getAllScoresInClass,
   getAdminDetails,
+  createScoresReport,
 };

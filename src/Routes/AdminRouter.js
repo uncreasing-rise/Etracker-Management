@@ -16,7 +16,7 @@ router.get(
   authorization(['admin']),
   getAllAdminsController
 );
-``
+
 router.get(
   '/:adminId',
   authenticateToken,
@@ -24,11 +24,7 @@ router.get(
   getAdminByIdController
 );
 
-router.post(
-  '/',
-
-  createAdminController
-);
+router.post('/', createAdminController);
 
 router.put(
   '/:adminId',

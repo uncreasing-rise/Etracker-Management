@@ -11,37 +11,30 @@ const getAssignmentById = async (classId, assignmentId) => {
   return await AssignmentModel.findOne({ classId, _id: assignmentId });
 };
 
+// Create a new assignment for a specific class
 const createAssignment = async (classId, assignmentData) => {
-  if (!classId || !assignmentData) {
-    throw new Error('Class ID and assignment data are required');
+  // Check if class exists
+  const classExists = await ClassModel.findById(classId);
+  if (!classExists) {
+    throw new Error('Class not found');
   }
 
-  try {
-    // Kiểm tra xem lớp học có tồn tại không
-    const classExists = await ClassModel.findById(classId);
-    if (!classExists) {
-      throw new Error('Class not found');
-    }
+  // Create assignment
+  const assignment = new AssignmentModel({
+    ...assignmentData,
+    classId, // Link assignment to class
+  });
 
-    // Tạo bài tập
-    const assignment = new AssignmentModel({
-      ...assignmentData,
-      classId, // Liên kết bài tập với lớp học
-    });
+  const savedAssignment = await assignment.save();
 
-    const savedAssignment = await assignment.save();
+  // Update class to add the new assignment ID
+  await ClassModel.findByIdAndUpdate(
+    classId,
+    { $push: { assignments: savedAssignment._id } },
+    { new: true }
+  );
 
-    // Cập nhật lớp học để thêm ID của bài tập mới vào danh sách assignments
-    await ClassModel.findByIdAndUpdate(
-      classId,
-      { $push: { assignments: savedAssignment._id } },
-      { new: true }
-    );
-
-    return savedAssignment;
-  } catch (error) {
-    throw new Error(`Error creating assignment: ${error.message}`);
-  }
+  return savedAssignment;
 };
 
 // Update assignment by ID for a specific class

@@ -1,18 +1,16 @@
-// MessageResponse.js
-
 class SuccessResponse {
-  constructor(message, data) {
-    this.success = true;
+  constructor(message = 'Operation successful', data = null) {
     this.message = message;
-    this.data = data || null;
+    if (data !== undefined) {
+      this.data = data;
+    }
   }
 }
 
 class ErrorResponse {
-  constructor(message, errorDetails) {
-    this.success = false;
+  constructor(message = 'An error occurred', errorDetails = null) {
     this.message = message;
-    this.error = errorDetails || null;
+    this.error = errorDetails;
   }
 }
 

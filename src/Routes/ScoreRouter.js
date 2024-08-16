@@ -42,4 +42,6 @@ router.get(
   scoreController.getAllScoresInClass
 );
 
+router.get('/class/:classId/report', scoreController.downloadScoresReport);
+
 module.exports = router;

@@ -1,77 +1,43 @@
 const mongoose = require('mongoose');
 const StudentModel = require('../Models/Student');
+const fs = require('fs');
+const PDFDocument = require('pdfkit');
 
 // Function to find a student by email
 const findStudentByEmail = async (email) => {
-  try {
-    return await StudentModel.findOne({ 'profile.email': email }).exec();
-  } catch (error) {
-    console.error('Error finding student by email:', error);
-    throw new Error('Error finding student');
-  }
+  return await StudentModel.findOne({ 'profile.email': email }).exec();
 };
 
 // Function to find a student by ID
 const findStudentById = async (id) => {
-  try {
-    return await StudentModel.findById(id).exec();
-  } catch (error) {
-    console.error('Error finding student by ID:', error);
-    throw new Error('Error finding student');
-  }
+  return await StudentModel.findById(id).exec();
 };
 
 // Function to create a new student
 const createStudent = async (studentData) => {
-  try {
-    const student = new StudentModel(studentData);
-    await student.save();
-    return student;
-  } catch (error) {
-    console.error('Error creating student:', error);
-    throw new Error('Error creating student');
-  }
+  const student = new StudentModel(studentData);
+  return await student.save();
 };
 
 // Function to update a student by ID
 const updateStudentById = async (id, updateData) => {
-  try {
-    const student = await StudentModel.findByIdAndUpdate(id, updateData, {
-      new: true,
-    }).exec();
-    return student;
-  } catch (error) {
-    console.error('Error updating student by ID:', error);
-    throw new Error('Error updating student');
-  }
+  return await StudentModel.findByIdAndUpdate(id, updateData, {
+    new: true,
+  }).exec();
 };
 
 // Function to delete a student by ID
 const deleteStudentById = async (id) => {
-  try {
-    const student = await StudentModel.findByIdAndDelete(id).exec();
-    return student;
-  } catch (error) {
-    console.error('Error deleting student by ID:', error);
-    throw new Error('Error deleting student');
-  }
+  return await StudentModel.findByIdAndDelete(id).exec();
 };
 
 // Function to submit a quiz attempt
 const submitQuizAttempt = async (studentId, quizSubmissionData) => {
-  try {
-    const student = await StudentModel.findByIdAndUpdate(
-      studentId,
-      { $push: { quizzes: quizSubmissionData } }, // Add the quiz submission data to the quizzes array
-      { new: true }
-    ).exec();
-    if (!student) {
-      throw new Error('Student not found');
-    }
-    return student;
-  } catch (error) {
-    throw new Error(`Error submitting quiz attempt: ${error.message}`);
-  }
+  return await StudentModel.findByIdAndUpdate(
+    studentId,
+    { $push: { quizzes: quizSubmissionData } }, // Add the quiz submission data to the quizzes array
+    { new: true }
+  ).exec();
 };
 
 /**
@@ -85,21 +51,73 @@ const updateStudent = async (studentId, updateData) => {
     throw new Error('Invalid student ID');
   }
 
-  try {
-    const updatedStudent = await StudentModel.findByIdAndUpdate(
-      studentId,
-      { $set: updateData },
-      { new: true, runValidators: true } // Return the updated document and run validators
-    ).exec();
+  return await StudentModel.findByIdAndUpdate(
+    studentId,
+    { $set: updateData },
+    { new: true, runValidators: true } // Return the updated document and run validators
+  ).exec();
+};
 
-    if (!updatedStudent) {
-      throw new Error('Student not found');
-    }
+/**
+ * Generate a PDF with scores for a given class.
+ * @param {Array} scores - The scores to include in the PDF.
+ * @param {string} filePath - The path where the PDF will be saved.
+ * @returns {Promise<string>} - The path to the generated PDF file.
+ */
+const generateScoresPDF = async (scores, filePath) => {
+  return new Promise((resolve, reject) => {
+    const doc = new PDFDocument();
+    doc.pipe(fs.createWriteStream(filePath));
 
-    return updatedStudent;
-  } catch (error) {
-    throw new Error(`Error updating student: ${error.message}`);
-  }
+    // Add title
+    doc.fontSize(16).text('Scores Report', { align: 'center' });
+    doc.moveDown();
+
+    // Add table headers
+    doc.fontSize(12).text('Student Name', { continued: true });
+    doc.text(' | ', { continued: true });
+    doc.text('Class Name', { continued: true });
+    doc.text(' | ', { continued: true });
+    doc.text('Score Type', { continued: true });
+    doc.text(' | ', { continued: true });
+    doc.text('Score Name', { continued: true });
+    doc.text(' | ', { continued: true });
+    doc.text('Score');
+    doc.moveDown();
+
+    // Draw a line under headers
+    doc.moveTo(30, doc.y).lineTo(570, doc.y).stroke();
+    doc.moveDown();
+
+    // Add table rows
+    scores.forEach((score) => {
+      const studentName = score.studentId?.profile?.fullName || 'N/A';
+      const className = score.classId?.className || 'N/A';
+      doc
+        .fontSize(10)
+        .text(studentName, { continued: true })
+        .text(' | ', { continued: true })
+        .text(className, { continued: true })
+        .text(' | ', { continued: true })
+        .text(score.scoreType, { continued: true })
+        .text(' | ', { continued: true })
+        .text(score.scoreName, { continued: true })
+        .text(' | ', { continued: true })
+        .text(score.score.toString());
+      doc.moveDown();
+    });
+
+    // Finalize the PDF and end the stream
+    doc.end();
+
+    doc.on('end', () => {
+      resolve(filePath);
+    });
+
+    doc.on('error', (error) => {
+      reject(new Error(`Failed to generate PDF: ${error.message}`));
+    });
+  });
 };
 
 module.exports = {
@@ -110,4 +128,5 @@ module.exports = {
   deleteStudentById,
   submitQuizAttempt,
   updateStudent,
+  generateScoresPDF,
 };

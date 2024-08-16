@@ -3,6 +3,15 @@ const {
   ErrorResponse,
 } = require('../Interfaces/MessageResponse'); // Adjust path as necessary
 const materialService = require('../Services/MaterialService');
+const {
+  ERROR_FILE_REQUIRED,
+  ERROR_CLASS_ID_REQUIRED,
+  ERROR_MATERIAL_ID_REQUIRED,
+  ERROR_RETRIEVAL,
+  ERROR_CREATION,
+  ERROR_UPDATE,
+  ERROR_DELETION,
+} = require('../Constants/ResponseMessages');
 
 // Create a new material
 const createMaterialController = async (req, res) => {
@@ -10,9 +19,7 @@ const createMaterialController = async (req, res) => {
   const files = req.files; // Expecting multiple files
 
   if (!files || files.length === 0) {
-    return res
-      .status(400)
-      .json(new ErrorResponse('At least one file is required'));
+    return res.status(400).json(new ErrorResponse(ERROR_FILE_REQUIRED));
   }
 
   try {
@@ -26,9 +33,7 @@ const createMaterialController = async (req, res) => {
       .status(201)
       .json(new SuccessResponse('Material created successfully', material));
   } catch (error) {
-    res
-      .status(400)
-      .json(new ErrorResponse('Error creating material', error.message));
+    res.status(400).json(new ErrorResponse(ERROR_CREATION, error.message));
   }
 };
 
@@ -37,7 +42,7 @@ const getMaterialsByClassIdController = async (req, res) => {
   const { classId } = req.params;
 
   if (!classId) {
-    return res.status(400).json(new ErrorResponse('Class ID is required'));
+    return res.status(400).json(new ErrorResponse(ERROR_CLASS_ID_REQUIRED));
   }
 
   try {
@@ -46,9 +51,7 @@ const getMaterialsByClassIdController = async (req, res) => {
       .status(200)
       .json(new SuccessResponse('Materials retrieved successfully', materials));
   } catch (error) {
-    res
-      .status(500)
-      .json(new ErrorResponse('Error retrieving materials', error.message));
+    res.status(500).json(new ErrorResponse(ERROR_RETRIEVAL, error.message));
   }
 };
 
@@ -57,7 +60,7 @@ const getMaterialByIdController = async (req, res) => {
   const { materialId } = req.params;
 
   if (!materialId) {
-    return res.status(400).json(new ErrorResponse('Material ID is required'));
+    return res.status(400).json(new ErrorResponse(ERROR_MATERIAL_ID_REQUIRED));
   }
 
   try {
@@ -70,9 +73,7 @@ const getMaterialByIdController = async (req, res) => {
       res.status(404).json(new ErrorResponse('Material not found'));
     }
   } catch (error) {
-    res
-      .status(500)
-      .json(new ErrorResponse('Error retrieving material', error.message));
+    res.status(500).json(new ErrorResponse(ERROR_RETRIEVAL, error.message));
   }
 };
 
@@ -81,7 +82,7 @@ const updateMaterialController = async (req, res) => {
   const { materialId } = req.params;
 
   if (!materialId) {
-    return res.status(400).json(new ErrorResponse('Material ID is required'));
+    return res.status(400).json(new ErrorResponse(ERROR_MATERIAL_ID_REQUIRED));
   }
 
   try {
@@ -99,9 +100,7 @@ const updateMaterialController = async (req, res) => {
       res.status(404).json(new ErrorResponse('Material not found'));
     }
   } catch (error) {
-    res
-      .status(400)
-      .json(new ErrorResponse('Error updating material', error.message));
+    res.status(400).json(new ErrorResponse(ERROR_UPDATE, error.message));
   }
 };
 
@@ -110,7 +109,7 @@ const deleteMaterialController = async (req, res) => {
   const { materialId } = req.params;
 
   if (!materialId) {
-    return res.status(400).json(new ErrorResponse('Material ID is required'));
+    return res.status(400).json(new ErrorResponse(ERROR_MATERIAL_ID_REQUIRED));
   }
 
   try {
@@ -123,9 +122,7 @@ const deleteMaterialController = async (req, res) => {
       res.status(404).json(new ErrorResponse('Material not found'));
     }
   } catch (error) {
-    res
-      .status(500)
-      .json(new ErrorResponse('Error deleting material', error.message));
+    res.status(500).json(new ErrorResponse(ERROR_DELETION, error.message));
   }
 };
 

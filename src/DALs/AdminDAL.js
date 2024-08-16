@@ -1,75 +1,43 @@
 const mongoose = require('mongoose');
-const AdminModel = require('../Models/Admin'); // Adjust the path to your Admin model
-const bcrypt = require('bcrypt');
+const AdminModel = require('../Models/Admin'); // Điều chỉnh đường dẫn đến mô hình Admin của bạn
 
 // Function to find an admin by email
 const findAdminByEmail = async (email) => {
-  try {
-    const admin = await AdminModel.findOne({ 'profile.email': email }).exec();
-    return admin;
-  } catch (error) {
-    console.error('Error finding admin by email:', error);
-    throw new Error('Error finding admin');
-  }
+  return await AdminModel.findOne({ 'profile.email': email }).exec();
 };
 
 // Get all admins
 const get = async () => {
-  try {
-    return await AdminModel.find().exec();
-  } catch (err) {
-    throw new Error(`Error fetching admins: ${err.message}`);
-  }
+  return await AdminModel.find().exec();
 };
 
 // Get admin by ID
 const getAdminById = async (userId) => {
-  try {
-    return await AdminModel.findById(userId).exec();
-  } catch (err) {
-    throw new Error(`Error fetching admin by ID: ${err.message}`);
-  }
+  return await AdminModel.findById(userId).exec();
 };
 
 // Create a new admin
 const createAdmin = async (data) => {
-  try {
-    const admin = new AdminModel(data);
-    return await admin.save();
-  } catch (err) {
-    throw new Error(`Error creating admin: ${err.message}`);
-  }
+  const admin = new AdminModel(data);
+  return await admin.save();
 };
 
 // Update admin information
 const updateAdmin = async (userId, data) => {
-  try {
-    return await AdminModel.findByIdAndUpdate(userId, data, {
-      new: true,
-      runValidators: true,
-    }).exec();
-  } catch (err) {
-    throw new Error(`Error updating admin: ${err.message}`);
-  }
+  return await AdminModel.findByIdAndUpdate(userId, data, {
+    new: true,
+    runValidators: true,
+  }).exec();
 };
 
 // Delete admin by ID
 const deleteAdmin = async (userId) => {
-  try {
-    return await AdminModel.findByIdAndDelete(userId).exec();
-  } catch (err) {
-    throw new Error(`Error deleting admin: ${err.message}`);
-  }
+  return await AdminModel.findByIdAndDelete(userId).exec();
 };
 
 // Find admin by ID with specific fields
 const findAdminById = async (adminId) => {
-  try {
-    return await AdminModel.findById(adminId).select('profile.fullName').exec();
-  } catch (error) {
-    console.error(`Error finding admin by ID: ${error.message}`);
-    throw new Error('Error finding admin');
-  }
+  return await AdminModel.findById(adminId).select('profile.fullName').exec();
 };
 
 module.exports = {

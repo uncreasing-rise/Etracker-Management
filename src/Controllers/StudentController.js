@@ -1,4 +1,7 @@
-const { SuccessResponse, ErrorResponse } = require('../Interfaces/MessageResponse'); // Adjust path as necessary
+const {
+  SuccessResponse,
+  ErrorResponse,
+} = require('../Interfaces/MessageResponse'); // Adjust path as necessary
 const {
   getAllStudentsService,
   getStudentByIdService,
@@ -6,6 +9,13 @@ const {
   updateStudentService,
   deleteStudentService,
 } = require('../Services/StudentService');
+const {
+  ERROR_STUDENT_NOT_FOUND,
+  ERROR_STUDENT_CREATION,
+  ERROR_STUDENT_UPDATE,
+  ERROR_STUDENT_DELETION,
+  ERROR_STUDENT_RETRIEVAL,
+} = require('../Constants/ResponseMessages');
 
 /**
  * Get all students
@@ -15,10 +25,14 @@ const {
 const getAllStudentsController = async (req, res) => {
   try {
     const students = await getAllStudentsService();
-    res.status(200).json(new SuccessResponse('Students retrieved successfully', students));
+    res
+      .status(200)
+      .json(new SuccessResponse('Students retrieved successfully', students));
   } catch (error) {
-    console.error('Error getting all students:', error);
-    res.status(500).json(new ErrorResponse('Error retrieving students', error.message));
+    console.error(`Error getting all students: ${error.message}`);
+    res
+      .status(500)
+      .json(new ErrorResponse(ERROR_STUDENT_RETRIEVAL, error.message));
   }
 };
 
@@ -32,13 +46,17 @@ const getStudentByIdController = async (req, res) => {
   try {
     const student = await getStudentByIdService(userId);
     if (student) {
-      res.status(200).json(new SuccessResponse('Student retrieved successfully', student));
+      res
+        .status(200)
+        .json(new SuccessResponse('Student retrieved successfully', student));
     } else {
-      res.status(404).json(new ErrorResponse('Student not found'));
+      res.status(404).json(new ErrorResponse(ERROR_STUDENT_NOT_FOUND));
     }
   } catch (error) {
-    console.error('Error getting student by ID:', error);
-    res.status(500).json(new ErrorResponse('Error retrieving student', error.message));
+    console.error(`Error getting student by ID: ${error.message}`);
+    res
+      .status(500)
+      .json(new ErrorResponse(ERROR_STUDENT_RETRIEVAL, error.message));
   }
 };
 
@@ -50,10 +68,14 @@ const getStudentByIdController = async (req, res) => {
 const createStudentController = async (req, res) => {
   try {
     const student = await createStudentService(req.body);
-    res.status(201).json(new SuccessResponse('Student created successfully', student));
+    res
+      .status(201)
+      .json(new SuccessResponse('Student created successfully', student));
   } catch (error) {
-    console.error('Error creating student:', error);
-    res.status(400).json(new ErrorResponse('Error creating student', error.message));
+    console.error(`Error creating student: ${error.message}`);
+    res
+      .status(400)
+      .json(new ErrorResponse(ERROR_STUDENT_CREATION, error.message));
   }
 };
 
@@ -67,13 +89,17 @@ const updateStudentController = async (req, res) => {
   try {
     const student = await updateStudentService(userId, req.body);
     if (student) {
-      res.status(200).json(new SuccessResponse('Student updated successfully', student));
+      res
+        .status(200)
+        .json(new SuccessResponse('Student updated successfully', student));
     } else {
-      res.status(404).json(new ErrorResponse('Student not found'));
+      res.status(404).json(new ErrorResponse(ERROR_STUDENT_NOT_FOUND));
     }
   } catch (error) {
-    console.error('Error updating student:', error);
-    res.status(400).json(new ErrorResponse('Error updating student', error.message));
+    console.error(`Error updating student: ${error.message}`);
+    res
+      .status(400)
+      .json(new ErrorResponse(ERROR_STUDENT_UPDATE, error.message));
   }
 };
 
@@ -89,11 +115,13 @@ const deleteStudentController = async (req, res) => {
     if (result) {
       res.status(200).json(new SuccessResponse('Student deleted successfully'));
     } else {
-      res.status(404).json(new ErrorResponse('Student not found'));
+      res.status(404).json(new ErrorResponse(ERROR_STUDENT_NOT_FOUND));
     }
   } catch (error) {
-    console.error('Error deleting student:', error);
-    res.status(500).json(new ErrorResponse('Error deleting student', error.message));
+    console.error(`Error deleting student: ${error.message}`);
+    res
+      .status(500)
+      .json(new ErrorResponse(ERROR_STUDENT_DELETION, error.message));
   }
 };
 
