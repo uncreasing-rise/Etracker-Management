@@ -29,9 +29,7 @@ const createMaterialController = async (req, res) => {
       req.body,
       files
     );
-    res
-      .status(201)
-      .json(new SuccessResponse('Material created successfully', material));
+    res.status(201).json(new SuccessResponse('Material created successfully'));
   } catch (error) {
     res.status(400).json(new ErrorResponse(ERROR_CREATION, error.message));
   }
@@ -47,9 +45,7 @@ const getMaterialsByClassIdController = async (req, res) => {
 
   try {
     const materials = await materialService.getMaterialsByClassId(classId);
-    res
-      .status(200)
-      .json(new SuccessResponse('Materials retrieved successfully', materials));
+    res.status(200).json(materials);
   } catch (error) {
     res.status(500).json(new ErrorResponse(ERROR_RETRIEVAL, error.message));
   }
@@ -66,9 +62,7 @@ const getMaterialByIdController = async (req, res) => {
   try {
     const material = await materialService.getMaterialById(materialId);
     if (material) {
-      res
-        .status(200)
-        .json(new SuccessResponse('Material retrieved successfully', material));
+      res.status(200).json(material);
     } else {
       res.status(404).json(new ErrorResponse('Material not found'));
     }
@@ -93,9 +87,7 @@ const updateMaterialController = async (req, res) => {
     if (updatedMaterial) {
       res
         .status(200)
-        .json(
-          new SuccessResponse('Material updated successfully', updatedMaterial)
-        );
+        .json(new SuccessResponse('Material updated successfully'));
     } else {
       res.status(404).json(new ErrorResponse('Material not found'));
     }

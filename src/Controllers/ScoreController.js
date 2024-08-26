@@ -30,9 +30,7 @@ const createScore = async (req, res) => {
     console.log('New score data:', newScoreData);
 
     const newScore = await scoreService.createScore(newScoreData);
-    res
-      .status(201)
-      .json(new SuccessResponse('Score created successfully', newScore));
+    res.status(201).json(new SuccessResponse('Score created successfully'));
   } catch (err) {
     console.error(`Error creating score: ${err.message}`);
     res.status(500).json(new ErrorResponse(ERROR_CREATION, err.message));
@@ -58,9 +56,7 @@ const getScoresByStudentAndClass = async (req, res) => {
       }
     }
 
-    res
-      .status(200)
-      .json(new SuccessResponse('Scores retrieved successfully', scores));
+    res.status(200).json(scores);
   } catch (err) {
     console.error(`Error retrieving scores: ${err.message}`);
     res.status(500).json(new ErrorResponse(ERROR_RETRIEVAL, err.message));
@@ -92,9 +88,7 @@ const updateScore = async (req, res) => {
       updatedScore.createdBy = adminDetails.profile.fullName;
     }
 
-    res
-      .status(200)
-      .json(new SuccessResponse('Score updated successfully', updatedScore));
+    res.status(200).json(new SuccessResponse('Score updated successfully'));
   } catch (err) {
     console.error(`Error updating score: ${err.message}`);
     res.status(500).json(new ErrorResponse(ERROR_UPDATE, err.message));

@@ -65,9 +65,7 @@ const getStudentByIdController = async (req, res) => {
 const createStudentController = async (req, res) => {
   try {
     const student = await createStudentService(req.body);
-    res
-      .status(201)
-      .json(new SuccessResponse('Student created successfully', student));
+    res.status(201).json(new SuccessResponse('Student created successfully'));
   } catch (error) {
     console.error(`Error creating student: ${error.message}`);
     res
@@ -86,9 +84,7 @@ const updateStudentController = async (req, res) => {
   try {
     const student = await updateStudentService(studentId, req.body);
     if (student) {
-      res
-        .status(200)
-        .json(new SuccessResponse('Student updated successfully', student));
+      res.status(200).json(new SuccessResponse('Student updated successfully'));
     } else {
       res.status(404).json(new ErrorResponse(ERROR_STUDENT_NOT_FOUND));
     }

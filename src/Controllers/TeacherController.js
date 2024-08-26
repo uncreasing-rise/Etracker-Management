@@ -25,9 +25,7 @@ const {
 const getAllTeachersController = async (req, res) => {
   try {
     const teachers = await getAllTeachersService();
-    res
-      .status(200)
-      .json(new SuccessResponse('Teachers retrieved successfully', teachers));
+    res.status(200).json(teachers);
   } catch (error) {
     console.error(`Error getting all teachers: ${error.message}`);
     res
@@ -46,9 +44,7 @@ const getTeacherByIdController = async (req, res) => {
   try {
     const teacher = await getTeacherByIdService(userId);
     if (teacher) {
-      res
-        .status(200)
-        .json(new SuccessResponse('Teacher retrieved successfully', teacher));
+      res.status(200).json(teacher);
     } else {
       res.status(404).json(new ErrorResponse(ERROR_TEACHER_NOT_FOUND));
     }
@@ -68,9 +64,7 @@ const getTeacherByIdController = async (req, res) => {
 const createTeacherController = async (req, res) => {
   try {
     const teacher = await createTeacherService(req.body);
-    res
-      .status(201)
-      .json(new SuccessResponse('Teacher created successfully', teacher));
+    res.status(201).json(new SuccessResponse('Teacher created successfully'));
   } catch (error) {
     console.error(`Error creating teacher: ${error.message}`);
     res
@@ -89,9 +83,7 @@ const updateTeacherController = async (req, res) => {
   try {
     const teacher = await updateTeacherService(userId, req.body);
     if (teacher) {
-      res
-        .status(200)
-        .json(new SuccessResponse('Teacher updated successfully', teacher));
+      res.status(200).json(new SuccessResponse('Teacher updated successfully'));
     } else {
       res.status(404).json(new ErrorResponse(ERROR_TEACHER_NOT_FOUND));
     }
