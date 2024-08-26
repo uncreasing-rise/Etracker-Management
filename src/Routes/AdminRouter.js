@@ -12,15 +12,13 @@ const { authorization } = require('../Middlewares/Authorization');
 
 router.get(
   '/',
-  authenticateToken,
-  authorization(['admin']),
+
   getAllAdminsController
 );
 
 router.get(
   '/:adminId',
-  authenticateToken,
-  authorization(['admin']),
+
   getAdminByIdController
 );
 
@@ -28,15 +26,13 @@ router.post('/', createAdminController);
 
 router.put(
   '/:adminId',
-  authenticateToken,
-  authorization(['admin']),
+
   updateAdminController
 );
 
 router.delete(
   '/:adminId',
-  authenticateToken,
-  authorization(['admin']),
+
   deleteAdminController
 );
 

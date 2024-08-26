@@ -1,10 +1,11 @@
+const { get } = require('http');
 const {
-  findStudentByEmail,
   findStudentById,
   createStudent,
   updateStudent,
-  deleteStudent,
+  deleteStudentById,
   getAllStudents,
+  getAllStudentOfClass,
 } = require('../DALs/StudentDAL');
 
 /**
@@ -22,12 +23,12 @@ const getAllStudentsService = async () => {
 
 /**
  * Get student by ID
- * @param {string} userId - The ID of the student
+ * @param {string} studentId - The ID of the student
  * @returns {Promise<Object|null>} - A promise that resolves to the student object or null if not found
  */
-const getStudentByIdService = async (userId) => {
+const getStudentByIdService = async (studentId) => {
   try {
-    return await findStudentById(userId);
+    return await findStudentById(studentId);
   } catch (error) {
     console.error('Error getting student by ID:', error);
     throw new Error('Error getting student');
@@ -50,13 +51,13 @@ const createStudentService = async (studentData) => {
 
 /**
  * Update student information
- * @param {string} userId - The ID of the student to update
+ * @param {string} studentId - The ID of the student to update
  * @param {Object} updateData - The data to update
  * @returns {Promise<Object|null>} - A promise that resolves to the updated student object or null if not found
  */
-const updateStudentService = async (userId, updateData) => {
+const updateStudentService = async (studentId, updateData) => {
   try {
-    return await updateStudent(userId, updateData);
+    return await updateStudent(studentId, updateData);
   } catch (error) {
     console.error('Error updating student:', error);
     throw new Error('Error updating student');
@@ -68,12 +69,21 @@ const updateStudentService = async (userId, updateData) => {
  * @param {string} userId - The ID of the student to delete
  * @returns {Promise<Object|null>} - A promise that resolves to the deleted student object or null if not found
  */
-const deleteStudentService = async (userId) => {
+const deleteStudentService = async (studentId) => {
+  console.log(studentId);
   try {
-    return await deleteStudent(userId);
+    return await deleteStudentById(studentId);
   } catch (error) {
     console.error('Error deleting student:', error);
     throw new Error('Error deleting student');
+  }
+};
+
+const getAllStudentOfClassService = async (classId) => {
+  try {
+    return await getAllStudentOfClass(classId);
+  } catch (error) {
+    throw new Error(`Failed to retrieve students: ${error.message}`);
   }
 };
 
@@ -83,4 +93,5 @@ module.exports = {
   createStudentService,
   updateStudentService,
   deleteStudentService,
+  getAllStudentOfClassService,
 };

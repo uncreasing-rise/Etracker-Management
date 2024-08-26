@@ -10,7 +10,8 @@ const findStudentByEmail = async (email) => {
 
 // Function to find a student by ID
 const findStudentById = async (id) => {
-  return await StudentModel.findById(id).exec();
+  const studentId = typeof id === 'string' ? id : id.studentId;
+  return await StudentModel.findById(studentId).exec();
 };
 
 // Function to create a new student
@@ -21,14 +22,41 @@ const createStudent = async (studentData) => {
 
 // Function to update a student by ID
 const updateStudentById = async (id, updateData) => {
-  return await StudentModel.findByIdAndUpdate(id, updateData, {
+  const studentId = typeof id === 'string' ? id : id.studentId;
+  return await StudentModel.findByIdAndUpdate(studentId, updateData, {
     new: true,
   }).exec();
 };
 
-// Function to delete a student by ID
 const deleteStudentById = async (id) => {
-  return await StudentModel.findByIdAndDelete(id).exec();
+  const studentId = typeof id === 'string' ? id : id.studentId;
+
+  if (!mongoose.Types.ObjectId.isValid(studentId)) {
+    throw new Error('Invalid student ID');
+  }
+
+  try {
+    const deletedStudent =
+      await StudentModel.findByIdAndDelete(studentId).exec();
+    if (!deletedStudent) {
+      throw new Error('Student not found');
+    }
+    return deletedStudent;
+  } catch (error) {
+    console.error('Error deleting student:', error);
+    throw new Error(`Failed to delete student: ${error.message}`);
+  }
+};
+
+// Function to get all students
+const getAllStudents = async () => {
+  try {
+    return await StudentModel.find()
+      .populate('enrolledClasses', 'className')
+      .exec();
+  } catch (error) {
+    throw new Error(`Failed to retrieve students: ${error.message}`);
+  }
 };
 
 // Function to submit a quiz attempt
@@ -40,13 +68,9 @@ const submitQuizAttempt = async (studentId, quizSubmissionData) => {
   ).exec();
 };
 
-/**
- * Updates a student document with the given update data.
- * @param {mongoose.Types.ObjectId | string} studentId - The ID of the student to update.
- * @param {Object} updateData - The data to update the student with.
- * @returns {Promise<mongoose.Document>} - The updated student document.
- */
-const updateStudent = async (studentId, updateData) => {
+const updateStudent = async (id, updateData) => {
+  const studentId = typeof id === 'string' ? id : id.studentId;
+
   if (!mongoose.Types.ObjectId.isValid(studentId)) {
     throw new Error('Invalid student ID');
   }
@@ -57,67 +81,9 @@ const updateStudent = async (studentId, updateData) => {
     { new: true, runValidators: true } // Return the updated document and run validators
   ).exec();
 };
-
-/**
- * Generate a PDF with scores for a given class.
- * @param {Array} scores - The scores to include in the PDF.
- * @param {string} filePath - The path where the PDF will be saved.
- * @returns {Promise<string>} - The path to the generated PDF file.
- */
-const generateScoresPDF = async (scores, filePath) => {
-  return new Promise((resolve, reject) => {
-    const doc = new PDFDocument();
-    doc.pipe(fs.createWriteStream(filePath));
-
-    // Add title
-    doc.fontSize(16).text('Scores Report', { align: 'center' });
-    doc.moveDown();
-
-    // Add table headers
-    doc.fontSize(12).text('Student Name', { continued: true });
-    doc.text(' | ', { continued: true });
-    doc.text('Class Name', { continued: true });
-    doc.text(' | ', { continued: true });
-    doc.text('Score Type', { continued: true });
-    doc.text(' | ', { continued: true });
-    doc.text('Score Name', { continued: true });
-    doc.text(' | ', { continued: true });
-    doc.text('Score');
-    doc.moveDown();
-
-    // Draw a line under headers
-    doc.moveTo(30, doc.y).lineTo(570, doc.y).stroke();
-    doc.moveDown();
-
-    // Add table rows
-    scores.forEach((score) => {
-      const studentName = score.studentId?.profile?.fullName || 'N/A';
-      const className = score.classId?.className || 'N/A';
-      doc
-        .fontSize(10)
-        .text(studentName, { continued: true })
-        .text(' | ', { continued: true })
-        .text(className, { continued: true })
-        .text(' | ', { continued: true })
-        .text(score.scoreType, { continued: true })
-        .text(' | ', { continued: true })
-        .text(score.scoreName, { continued: true })
-        .text(' | ', { continued: true })
-        .text(score.score.toString());
-      doc.moveDown();
-    });
-
-    // Finalize the PDF and end the stream
-    doc.end();
-
-    doc.on('end', () => {
-      resolve(filePath);
-    });
-
-    doc.on('error', (error) => {
-      reject(new Error(`Failed to generate PDF: ${error.message}`));
-    });
-  });
+const getAllStudentOfClass = async (id) => {
+  const classId = typeof id === 'string' ? id : id.classId;
+  return await StudentModel.find({ enrolledClasses: classId }).exec();
 };
 
 module.exports = {
@@ -126,7 +92,8 @@ module.exports = {
   createStudent,
   updateStudentById,
   deleteStudentById,
+  getAllStudents,
   submitQuizAttempt,
   updateStudent,
-  generateScoresPDF,
+  getAllStudentOfClass,
 };

@@ -37,8 +37,7 @@ router.delete(
 
 router.get(
   '/class/:classId/scores',
-  authenticateToken,
-  authorization(['admin']),
+
   scoreController.getAllScoresInClass
 );
 

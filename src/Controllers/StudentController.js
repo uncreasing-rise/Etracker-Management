@@ -8,6 +8,7 @@ const {
   createStudentService,
   updateStudentService,
   deleteStudentService,
+  getAllStudentOfClassService,
 } = require('../Services/StudentService');
 const {
   ERROR_STUDENT_NOT_FOUND,
@@ -25,9 +26,7 @@ const {
 const getAllStudentsController = async (req, res) => {
   try {
     const students = await getAllStudentsService();
-    res
-      .status(200)
-      .json(new SuccessResponse('Students retrieved successfully', students));
+    res.status(200).json(students);
   } catch (error) {
     console.error(`Error getting all students: ${error.message}`);
     res
@@ -42,13 +41,11 @@ const getAllStudentsController = async (req, res) => {
  * @param {Object} res - Express response object
  */
 const getStudentByIdController = async (req, res) => {
-  const { userId } = req.params;
+  const studentId = req.params;
   try {
-    const student = await getStudentByIdService(userId);
+    const student = await getStudentByIdService(studentId);
     if (student) {
-      res
-        .status(200)
-        .json(new SuccessResponse('Student retrieved successfully', student));
+      res.status(200).json(student);
     } else {
       res.status(404).json(new ErrorResponse(ERROR_STUDENT_NOT_FOUND));
     }
@@ -85,9 +82,9 @@ const createStudentController = async (req, res) => {
  * @param {Object} res - Express response object
  */
 const updateStudentController = async (req, res) => {
-  const { userId } = req.params;
+  const studentId = req.params;
   try {
-    const student = await updateStudentService(userId, req.body);
+    const student = await updateStudentService(studentId, req.body);
     if (student) {
       res
         .status(200)
@@ -109,9 +106,10 @@ const updateStudentController = async (req, res) => {
  * @param {Object} res - Express response object
  */
 const deleteStudentController = async (req, res) => {
-  const { userId } = req.params;
+  const studentId = req.params;
+  console.log(studentId);
   try {
-    const result = await deleteStudentService(userId);
+    const result = await deleteStudentService(studentId);
     if (result) {
       res.status(200).json(new SuccessResponse('Student deleted successfully'));
     } else {
@@ -125,10 +123,32 @@ const deleteStudentController = async (req, res) => {
   }
 };
 
+const getAllStudentOfClass = async (req, res) => {
+  // Extract classId correctly from req.params
+  const classId = req.params;
+  console.log(classId);
+  try {
+    // Call the actual service or DAL function to get the students
+    const result = await getAllStudentOfClassService(classId);
+
+    if (result && result.length > 0) {
+      res.status(200).json(result);
+    } else {
+      res
+        .status(404)
+        .json(new ErrorResponse('Students not found for the given class ID'));
+    }
+  } catch (error) {
+    console.error(`Error getting student by class ID: ${error.message}`);
+    res.status(500).json(new ErrorResponse('Internal Server Error'));
+  }
+};
+
 module.exports = {
   getAllStudentsController,
   getStudentByIdController,
   createStudentController,
   updateStudentController,
   deleteStudentController,
+  getAllStudentOfClass,
 };
