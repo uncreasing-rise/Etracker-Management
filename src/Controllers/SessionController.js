@@ -1,7 +1,7 @@
 const {
   SuccessResponse,
   ErrorResponse,
-} = require('../Interfaces/MessageResponse'); // Adjust path as necessary
+} = require('../Interfaces/MessageResponse');
 const sessionService = require('../Services/SessionService');
 const {
   ERROR_SESSION_NOT_FOUND,

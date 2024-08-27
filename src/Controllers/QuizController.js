@@ -1,7 +1,7 @@
 const {
   SuccessResponse,
   ErrorResponse,
-} = require('../Interfaces/MessageResponse'); // Adjust path as necessary
+} = require('../Interfaces/MessageResponse');
 const quizService = require('../Services/QuizService');
 const {
   ERROR_CLASS_ID_REQUIRED,

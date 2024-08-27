@@ -1,7 +1,7 @@
 const {
   SuccessResponse,
   ErrorResponse,
-} = require('../Interfaces/MessageResponse'); // Adjust path as necessary
+} = require('../Interfaces/MessageResponse');
 const {
   getAllStudentsService,
   getStudentByIdService,
@@ -103,7 +103,6 @@ const updateStudentController = async (req, res) => {
  */
 const deleteStudentController = async (req, res) => {
   const studentId = req.params;
-  console.log(studentId);
   try {
     const result = await deleteStudentService(studentId);
     if (result) {

@@ -28,22 +28,35 @@ const updateStudentById = async (id, updateData) => {
   }).exec();
 };
 
+/**
+ * Deletes a student by their ID.
+ * @param {string | { studentId: string }} id - The student ID or an object containing studentId.
+ * @returns {Promise<Object>} - The deleted student document.
+ * @throws {Error} - Throws an error if the ID is invalid or the student is not found.
+ */
 const deleteStudentById = async (id) => {
+  // Extract the student ID from the input
   const studentId = typeof id === 'string' ? id : id.studentId;
 
+  // Validate the ID format
   if (!mongoose.Types.ObjectId.isValid(studentId)) {
     throw new Error('Invalid student ID');
   }
 
   try {
+    // Attempt to find and delete the student
     const deletedStudent =
       await StudentModel.findByIdAndDelete(studentId).exec();
+
+    // Check if the student was found and deleted
     if (!deletedStudent) {
       throw new Error('Student not found');
     }
+
     return deletedStudent;
   } catch (error) {
-    console.error('Error deleting student:', error);
+    // Log and throw a detailed error
+    console.error('Error deleting student:', error.message);
     throw new Error(`Failed to delete student: ${error.message}`);
   }
 };

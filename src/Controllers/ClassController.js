@@ -1,7 +1,7 @@
 const {
   SuccessResponse,
   ErrorResponse,
-} = require('../Interfaces/MessageResponse'); // Adjust path as necessary
+} = require('../Interfaces/MessageResponse');
 const classService = require('../Services/ClassService');
 const {
   ERROR_MISSING_FIELDS,
@@ -59,7 +59,7 @@ const createClassController = async (req, res) => {
 
 // Update class information
 const updateClassController = async (req, res) => {
-  const { classId } = req.params;
+  const classId = req.params;
   if (!classId) {
     return res.status(400).json(new ErrorResponse(ERROR_MISSING_FIELDS));
   }
@@ -84,7 +84,7 @@ const updateClassController = async (req, res) => {
 
 // Delete class by ID
 const deleteClassController = async (req, res) => {
-  const { classId } = req.params;
+  const classId = req.params;
   if (!classId) {
     return res.status(400).json(new ErrorResponse(ERROR_MISSING_FIELDS));
   }

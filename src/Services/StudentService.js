@@ -1,4 +1,3 @@
-const { get } = require('http');
 const {
   findStudentById,
   createStudent,
@@ -70,7 +69,6 @@ const updateStudentService = async (studentId, updateData) => {
  * @returns {Promise<Object|null>} - A promise that resolves to the deleted student object or null if not found
  */
 const deleteStudentService = async (studentId) => {
-  console.log(studentId);
   try {
     return await deleteStudentById(studentId);
   } catch (error) {

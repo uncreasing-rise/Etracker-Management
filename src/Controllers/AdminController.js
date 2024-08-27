@@ -8,7 +8,7 @@ const {
 const {
   SuccessResponse,
   ErrorResponse,
-} = require('../Interfaces/MessageResponse'); // Adjust path as necessary
+} = require('../Interfaces/MessageResponse');
 const {
   SUCCESS_CREATE,
   SUCCESS_UPDATE,
@@ -16,7 +16,6 @@ const {
   ERROR_NOT_FOUND,
   ERROR_INTERNAL_SERVER,
   SUCCESS_DELETE,
-  SUCCESS_RETRIEVE,
 } = require('../Constants/ResponseMessages');
 
 /**

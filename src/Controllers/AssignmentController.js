@@ -2,7 +2,7 @@ const assignmentService = require('../Services/AssignmentService');
 const {
   SuccessResponse,
   ErrorResponse,
-} = require('../Interfaces/MessageResponse'); // Adjust path as necessary
+} = require('../Interfaces/MessageResponse');
 const {
   SUCCESS_CREATE,
   SUCCESS_UPDATE,
