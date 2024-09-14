@@ -1,7 +1,7 @@
 const {
   SuccessResponse,
   ErrorResponse,
-} = require('../Interfaces/MessageResponse'); // Adjust path as necessary
+} = require('../Interfaces/MessageResponse');
 const sessionService = require('../Services/SessionService');
 const {
   ERROR_SESSION_NOT_FOUND,
@@ -16,9 +16,7 @@ const createSession = async (req, res) => {
   try {
     const sessionData = req.body;
     const session = await sessionService.createSession(sessionData);
-    res
-      .status(201)
-      .json(new SuccessResponse('Session created successfully', session));
+    res.status(201).json(new SuccessResponse('Session created successfully'));
   } catch (error) {
     console.error(`Error creating session: ${error.message}`);
     res
@@ -34,9 +32,7 @@ const getSessionById = async (req, res) => {
     if (!session) {
       return res.status(404).json(new ErrorResponse(ERROR_SESSION_NOT_FOUND));
     }
-    res
-      .status(200)
-      .json(new SuccessResponse('Session retrieved successfully', session));
+    res.status(200).json(session);
   } catch (error) {
     console.error(`Error retrieving session: ${error.message}`);
     res
@@ -55,9 +51,7 @@ const updateSession = async (req, res) => {
     if (!session) {
       return res.status(404).json(new ErrorResponse(ERROR_SESSION_NOT_FOUND));
     }
-    res
-      .status(200)
-      .json(new SuccessResponse('Session updated successfully', session));
+    res.status(200).json(new SuccessResponse('Session updated successfully'));
   } catch (error) {
     console.error(`Error updating session: ${error.message}`);
     res
@@ -88,9 +82,7 @@ const getSessionsByClassId = async (req, res) => {
     const sessions = await sessionService.getSessionsByClassId(
       req.params.classId
     );
-    res
-      .status(200)
-      .json(new SuccessResponse('Sessions retrieved successfully', sessions));
+    res.status(200).json(sessions);
   } catch (error) {
     console.error(`Error retrieving sessions: ${error.message}`);
     res

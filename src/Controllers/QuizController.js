@@ -1,7 +1,7 @@
 const {
   SuccessResponse,
   ErrorResponse,
-} = require('../Interfaces/MessageResponse'); // Adjust path as necessary
+} = require('../Interfaces/MessageResponse');
 const quizService = require('../Services/QuizService');
 const {
   ERROR_CLASS_ID_REQUIRED,
@@ -21,9 +21,7 @@ const getAllQuizzesController = async (req, res) => {
 
   try {
     const quizzes = await quizService.getAllQuizzesService(classId);
-    res
-      .status(200)
-      .json(new SuccessResponse('Quizzes retrieved successfully', quizzes));
+    res.status(200).json(quizzes);
   } catch (error) {
     res.status(500).json(new ErrorResponse(ERROR_RETRIEVAL, error.message));
   }
@@ -43,9 +41,7 @@ const getQuizByIdController = async (req, res) => {
   try {
     const quiz = await quizService.getQuizByIdService(classId, quizId);
     if (quiz) {
-      res
-        .status(200)
-        .json(new SuccessResponse('Quiz retrieved successfully', quiz));
+      res.status(200).json(quiz);
     } else {
       res
         .status(404)
@@ -67,9 +63,7 @@ const createQuizController = async (req, res) => {
 
   try {
     const quizData = await quizService.createQuizService(classId, req.body);
-    res
-      .status(201)
-      .json(new SuccessResponse('Quiz created successfully', quizData));
+    res.status(201).json(new SuccessResponse('Quiz created successfully'));
   } catch (error) {
     res.status(400).json(new ErrorResponse(ERROR_CREATION, error.message));
   }
@@ -93,9 +87,7 @@ const updateQuizController = async (req, res) => {
       req.body
     );
     if (updatedQuiz) {
-      res
-        .status(200)
-        .json(new SuccessResponse('Quiz updated successfully', updatedQuiz));
+      res.status(200).json(new SuccessResponse('Quiz updated successfully'));
     } else {
       res
         .status(404)

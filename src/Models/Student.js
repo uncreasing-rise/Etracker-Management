@@ -32,26 +32,6 @@ const QuizSchema = new Schema({
   answers: [{ type: String }],
 });
 
-// Define the schema for material access details
-const MaterialAccessedSchema = new Schema({
-  materialId: {
-    type: Schema.Types.ObjectId,
-    ref: 'Material',
-  },
-  classId: {
-    type: Schema.Types.ObjectId,
-    ref: 'Class',
-  },
-  accessDate: { type: Date },
-});
-
-// Define the schema for notifications
-const NotificationSchema = new Schema({
-  date: { type: Date },
-  message: { type: String },
-  read: { type: Boolean, default: false },
-});
-
 // Define the schema for the student document
 const StudentSchema = new Schema(
   {
@@ -72,8 +52,6 @@ const StudentSchema = new Schema(
     ],
     assignments: [AssignmentSchema],
     quizzes: [QuizSchema],
-    materialsAccessed: [MaterialAccessedSchema],
-    notifications: [NotificationSchema],
   },
   { timestamps: true } // Automatically adds createdAt and updatedAt fields
 );

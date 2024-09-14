@@ -2,7 +2,7 @@ const assignmentService = require('../Services/AssignmentService');
 const {
   SuccessResponse,
   ErrorResponse,
-} = require('../Interfaces/MessageResponse'); // Adjust path as necessary
+} = require('../Interfaces/MessageResponse');
 const {
   SUCCESS_CREATE,
   SUCCESS_UPDATE,
@@ -22,11 +22,7 @@ const getAllAssignmentsController = async (req, res) => {
   try {
     const assignments =
       await assignmentService.getAllAssignmentsService(classId);
-    res
-      .status(200)
-      .json(
-        new SuccessResponse('Assignments retrieved successfully', assignments)
-      );
+    res.status(200).json(assignments);
   } catch (error) {
     console.error('Error retrieving assignments:', error);
     res
@@ -48,11 +44,7 @@ const getAssignmentByIdController = async (req, res) => {
       assignmentId
     );
     if (assignment) {
-      res
-        .status(200)
-        .json(
-          new SuccessResponse('Assignment retrieved successfully', assignment)
-        );
+      res.status(200).json(assignment);
     } else {
       res.status(404).json(new ErrorResponse(ERROR_NOT_FOUND));
     }
@@ -76,7 +68,7 @@ const createAssignmentController = async (req, res) => {
       classId,
       req.body
     );
-    res.status(201).json(new SuccessResponse(SUCCESS_CREATE, assignmentData));
+    res.status(201).json(new SuccessResponse(SUCCESS_CREATE));
   } catch (error) {
     console.error('Error creating assignment:', error);
     res
@@ -99,9 +91,7 @@ const updateAssignmentController = async (req, res) => {
       req.body
     );
     if (updatedAssignment) {
-      res
-        .status(200)
-        .json(new SuccessResponse(SUCCESS_UPDATE, updatedAssignment));
+      res.status(200).json(new SuccessResponse(SUCCESS_UPDATE));
     } else {
       res.status(404).json(new ErrorResponse(ERROR_NOT_FOUND));
     }

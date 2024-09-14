@@ -8,7 +8,7 @@ const {
 const {
   SuccessResponse,
   ErrorResponse,
-} = require('../Interfaces/MessageResponse'); // Adjust path as necessary
+} = require('../Interfaces/MessageResponse');
 const {
   SUCCESS_CREATE,
   SUCCESS_UPDATE,
@@ -16,7 +16,6 @@ const {
   ERROR_NOT_FOUND,
   ERROR_INTERNAL_SERVER,
   SUCCESS_DELETE,
-  SUCCESS_RETRIEVE,
 } = require('../Constants/ResponseMessages');
 
 /**
@@ -27,7 +26,7 @@ const {
 const getAllAdminsController = async (req, res) => {
   try {
     const admins = await getAllAdminsService();
-    res.status(200).json(new SuccessResponse(SUCCESS_RETRIEVE, admins));
+    res.status(200).json(admins);
   } catch (error) {
     console.error('Error getting all admins:', error);
     res
@@ -46,7 +45,7 @@ const getAdminByIdController = async (req, res) => {
   try {
     const admin = await getAdminByIdService(adminId);
     if (admin) {
-      res.status(200).json(new SuccessResponse(SUCCESS_RETRIEVE, admin));
+      res.status(200).json(admin);
     } else {
       res.status(404).json(new ErrorResponse(ERROR_NOT_FOUND));
     }
@@ -66,7 +65,7 @@ const getAdminByIdController = async (req, res) => {
 const createAdminController = async (req, res) => {
   try {
     const admin = await createAdminService(req.body);
-    res.status(201).json(new SuccessResponse(SUCCESS_CREATE, admin));
+    res.status(201).json(new SuccessResponse(SUCCESS_CREATE));
   } catch (error) {
     console.error('Error creating admin:', error);
     res
@@ -85,7 +84,7 @@ const updateAdminController = async (req, res) => {
   try {
     const admin = await updateAdminService(adminId, req.body);
     if (admin) {
-      res.status(200).json(new SuccessResponse(SUCCESS_UPDATE, admin));
+      res.status(200).json(new SuccessResponse(SUCCESS_UPDATE));
     } else {
       res.status(404).json(new ErrorResponse(ERROR_NOT_FOUND));
     }

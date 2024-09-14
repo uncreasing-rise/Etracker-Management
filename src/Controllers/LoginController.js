@@ -1,7 +1,7 @@
 const {
   SuccessResponse,
   ErrorResponse,
-} = require('../Interfaces/MessageResponse'); // Adjust path as necessary
+} = require('../Interfaces/MessageResponse');
 const { login } = require('../Services/LoginService');
 const {
   ERROR_MISSING_FIELDS,
